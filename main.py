@@ -220,6 +220,7 @@ class AudioToSheetMusicConverter:
                 durations = self.__split_duration(note_length, current_bar)
                 for i, duration in enumerate(durations):
                     current_note = abjad.Note(height, duration)
+                    print(current_note)
                     if len(durations) > 1 and i == 0:
                         abjad.attach(abjad.StartSlur(), current_note)
                     elif len(durations) > 1 and i == len(durations) - 1:
