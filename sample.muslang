@@ -1,0 +1,8 @@
+# Print numbers 0-4 in MusLang
+C F♯ C♯      # Declare variable as integer
+A♯ A♯ A♯     # for loop
+A♯ B         # in
+C♯ D♯ 5      # range 5
+C C C        # begin loop body
+E A♯         # print A♯
+B B B        # end loop body
