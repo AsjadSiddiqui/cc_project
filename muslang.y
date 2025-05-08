@@ -28,11 +28,13 @@
 %token tok_var
 %token tok_for_start tok_in tok_range tok_loop_start tok_loop_end
 %token tok_print
+%token tok_if tok_else tok_if_end
+%token tok_equal tok_less_than tok_greater_than
 %token <identifier> tok_identifier
 %token <int_literal> tok_int_literal
 %token <float_literal> tok_float_literal
 %token <string_literal> tok_string_literal
-%type <value> term expression
+%type <value> term expression condition
 
 %start program
 %%
@@ -45,45 +47,67 @@ statement:
 	declaration				{debugBison(3);}
 	| output				{debugBison(4);}
 	| loop					{debugBison(5);}
+	| conditional			{debugBison(6);}
 	;
 
 declaration:
-	tok_var tok_string tok_multiply		{debugBison(6); /* Variable declaration with string type */}
-	| tok_var tok_integer tok_multiply	{debugBison(7); /* Variable declaration with integer type */}
-	| tok_var tok_float tok_multiply	{debugBison(8); /* Variable declaration with float type */}
-	| tok_var tok_boolean tok_multiply	{debugBison(9); /* Variable declaration with boolean type */}
-	| assignment				{debugBison(10);}
+	tok_var tok_string tok_multiply		{debugBison(7); /* Variable declaration with string type */}
+	| tok_var tok_integer tok_multiply	{debugBison(8); /* Variable declaration with integer type */}
+	| tok_var tok_float tok_multiply	{debugBison(9); /* Variable declaration with float type */}
+	| tok_var tok_boolean tok_multiply	{debugBison(10); /* Variable declaration with boolean type */}
+	| assignment				{debugBison(11);}
 	;
 
 assignment:
-	tok_identifier tok_multiply expression	{debugBison(11); setDouble($1, $3); free($1);}
+	tok_identifier tok_multiply expression	{debugBison(12); setDouble($1, $3); free($1);}
 	;
 
 output:
-	tok_print term			{debugBison(12); printDouble($2);}
-	| tok_print tok_string_literal	{debugBison(13); printString($2); free($2);}
+	tok_print term			{debugBison(13); printDouble($2);}
+	| tok_print tok_string_literal	{debugBison(14); printString($2); free($2);}
 	;
 
 loop:
 	tok_for_start tok_in tok_range tok_int_literal tok_loop_start program tok_loop_end
 	{
-		debugBison(14);
-		/* For loop implementation */
+		debugBison(15);
+		createLoopStart($4);
+		/* Loop body code is automatically inserted by the parser */
+		createLoopEnd();
 	}
 	;
 
+conditional:
+	tok_if condition tok_loop_start program tok_if_end
+	{
+		debugBison(16);
+		createIfStatement($2);
+	}
+	| tok_if condition tok_loop_start program tok_else program tok_if_end
+	{
+		debugBison(17);
+		createIfElseStatement($2);
+	}
+	;
+
+condition:
+	expression tok_equal expression		{debugBison(18); $$ = createComparison($1, $3, FCMP_OEQ);}
+	| expression tok_less_than expression	{debugBison(19); $$ = createComparison($1, $3, FCMP_OLT);}
+	| expression tok_greater_than expression	{debugBison(20); $$ = createComparison($1, $3, FCMP_OGT);}
+	;
+
 term:
-	tok_identifier			{debugBison(15); Value* ptr = getFromSymbolTable($1); $$ = builder.CreateLoad(builder.getDoubleTy(), ptr, "load_identifier"); free($1);}
-	| tok_int_literal		{debugBison(16); $$ = createDoubleConstant((double)$1);}
-	| tok_float_literal		{debugBison(17); $$ = createDoubleConstant($1);}
+	tok_identifier			{debugBison(21); Value* ptr = getFromSymbolTable($1); $$ = builder.CreateLoad(builder.getDoubleTy(), ptr, "load_identifier"); free($1);}
+	| tok_int_literal		{debugBison(22); $$ = createDoubleConstant((double)$1);}
+	| tok_float_literal		{debugBison(23); $$ = createDoubleConstant($1);}
 	;
 
 expression:
-	term					{debugBison(18); $$ = $1;}
-	| expression tok_plus expression	{debugBison(19); $$ = performBinaryOperation($1, $3, '+');}
-	| expression tok_minus expression	{debugBison(20); $$ = performBinaryOperation($1, $3, '-');}
-	| expression tok_multiply expression	{debugBison(21); $$ = performBinaryOperation($1, $3, '*');}
-	| expression tok_divide expression	{debugBison(22); $$ = performBinaryOperation($1, $3, '/');}
+	term					{debugBison(24); $$ = $1;}
+	| expression tok_plus expression	{debugBison(25); $$ = performBinaryOperation($1, $3, '+');}
+	| expression tok_minus expression	{debugBison(26); $$ = performBinaryOperation($1, $3, '-');}
+	| expression tok_multiply expression	{debugBison(27); $$ = performBinaryOperation($1, $3, '*');}
+	| expression tok_divide expression	{debugBison(28); $$ = performBinaryOperation($1, $3, '/');}
 	;
 %%
 int main(int argc, char** argv) {

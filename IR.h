@@ -28,6 +28,11 @@ Value* createDoubleConstant(double val);
 void createLoopStart(int iterations);
 void createLoopEnd();
 
+// Conditional handling functions
+Value* createComparison(Value* lhs, Value* rhs, CmpInst::Predicate pred);
+void createIfStatement(Value* condition);
+void createIfElseStatement(Value* condition);
+
 // Symbol table and LLVM context
 static std::map<std::string, Value *> SymbolTable;
 static LLVMContext context;
@@ -44,6 +49,15 @@ struct LoopInfo {
     Value *iterationCount;
 };
 static std::stack<LoopInfo> loopStack;
+
+// Conditional management structures
+struct IfInfo {
+    BasicBlock *thenBlock;
+    BasicBlock *elseBlock;
+    BasicBlock *mergeBlock;
+    Value *condition;
+};
+static std::stack<IfInfo> ifStack;
 
 /**
 * Initialize LLVM
@@ -125,6 +139,74 @@ Value* performBinaryOperation(Value* lhs, Value* rhs, int op) {
         case '/': return builder.CreateFDiv(lhs, rhs, "fdiv");
         default: yyerror("illegal binary operation"); exit(EXIT_FAILURE);
     }
+}
+
+// Create comparison between two values
+Value* createComparison(Value* lhs, Value* rhs, CmpInst::Predicate pred) {
+    Value* cmp = builder.CreateFCmp(pred, lhs, rhs, "comparison");
+    // Convert i1 to double for consistent type handling
+    return builder.CreateUIToFP(cmp, builder.getDoubleTy(), "boolToDouble");
+}
+
+// Creates the if statement structure
+void createIfStatement(Value* condition) {
+    // Convert double back to boolean for the branch
+    Value* condBool = builder.CreateFPToUI(condition, builder.getInt1Ty(), "doubleToBool");
+    
+    // Create blocks for 'then' and merge (after if)
+    BasicBlock *thenBlock = BasicBlock::Create(context, "then", mainFunction);
+    BasicBlock *mergeBlock = BasicBlock::Create(context, "ifcont", mainFunction);
+    
+    // Create conditional branch based on condition
+    builder.CreateCondBr(condBool, thenBlock, mergeBlock);
+    
+    // Set insert point to then block
+    builder.SetInsertPoint(thenBlock);
+    
+    // Store for nested usage - body code is handled by bison
+    IfInfo ifInfo = {thenBlock, nullptr, mergeBlock, condition};
+    ifStack.push(ifInfo);
+    
+    // Add unconditional branch from 'then' to 'merge'
+    builder.CreateBr(mergeBlock);
+    
+    // Set insertion point to merge block for code after if
+    builder.SetInsertPoint(mergeBlock);
+}
+
+// Creates the if-else statement structure
+void createIfElseStatement(Value* condition) {
+    // Convert double back to boolean for the branch
+    Value* condBool = builder.CreateFPToUI(condition, builder.getInt1Ty(), "doubleToBool");
+    
+    // Create blocks for 'then', 'else', and merge (after if-else)
+    BasicBlock *thenBlock = BasicBlock::Create(context, "then", mainFunction);
+    BasicBlock *elseBlock = BasicBlock::Create(context, "else", mainFunction);
+    BasicBlock *mergeBlock = BasicBlock::Create(context, "ifcont", mainFunction);
+    
+    // Create conditional branch based on condition
+    builder.CreateCondBr(condBool, thenBlock, elseBlock);
+    
+    // Set insert point to then block
+    builder.SetInsertPoint(thenBlock);
+    
+    // Store for nested usage - body code is handled by bison
+    IfInfo ifInfo = {thenBlock, elseBlock, mergeBlock, condition};
+    ifStack.push(ifInfo);
+    
+    // Add unconditional branch from 'then' to 'merge'
+    builder.CreateBr(mergeBlock);
+    
+    // Set insertion point to else block
+    builder.SetInsertPoint(elseBlock);
+    
+    // Body code is inserted by bison
+    
+    // Add unconditional branch from 'else' to 'merge'
+    builder.CreateBr(mergeBlock);
+    
+    // Set insertion point to merge block for code after if-else
+    builder.SetInsertPoint(mergeBlock);
 }
 
 // Creates the beginning of a for loop
