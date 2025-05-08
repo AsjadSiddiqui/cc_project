@@ -193,6 +193,41 @@ class AudioToSheetMusicConverter:
         
         return self.__notesroll, self.__bpm
     
+    def generate_text_notes(self, output_directory='results'):
+        """Generate a simple text file with the detected notes."""
+        if not self.__notesroll:
+            print("No notes to generate text file from. Run convert_to_notes() first.")
+            return
+            
+        print("Generating plain text notes file...")
+        # Make sure output directory exists
+        os.makedirs(output_directory, exist_ok=True)
+        
+        # Create text file path
+        txt_path = os.path.join(output_directory, 'notes.txt')
+        
+        # Extract just the note names (without octaves for simplicity)
+        with open(txt_path, 'w') as f:
+            f.write("# Detected Notes\n\n")
+            for note in self.__notesroll:
+                # Get the base note (A, B, C, etc.) without the octave number
+                note_name = note[3][0]  # First character is the note name
+                # Check if there's a sharp or flat
+                if len(note[3]) > 1 and (note[3][1] == '♯' or note[3][1] == '♭'):
+                    note_name += note[3][1]
+                f.write(f"{note_name} ")
+            
+            # Add a more detailed section with timing information
+            f.write("\n\n# Detailed Notes (with timing)\n\n")
+            for i, note in enumerate(self.__notesroll):
+                onset = float(note[0])
+                offset = float(note[1])
+                duration = offset - onset
+                f.write(f"Note {i+1}: {note[3]} (Duration: {duration:.2f}s)\n")
+        
+        print(f"Created text notes file at {txt_path}")
+        return txt_path
+
     def generate_sheet_music(self, output_directory='results', error=0.05, precision=0.2, meter=(4, 4)):
         """Generate sheet music from the note roll."""
         if not self.__notesroll:
@@ -296,17 +331,30 @@ class AudioToSheetMusicConverter:
         return ly_path
 
 
-def process_audio_file(file_path, note_min="C4", note_max="C6", onset_method=1):
-    """Process a single audio file and convert it to sheet music."""
+def process_audio_file(file_path, note_min="C4", note_max="C6", onset_method=1, output_format="lily"):
+    """Process a single audio file and convert it to sheet music or text notes.
+    
+    Args:
+        file_path: Path to the audio file
+        note_min: Minimum note to detect (e.g., C4)
+        note_max: Maximum note to detect (e.g., C6)
+        onset_method: Onset detection method (0, 1, 2)
+        output_format: "lily" for LilyPond/PDF/PNG or "text" for simple text notes
+    
+    Returns:
+        Path to the generated output file
+    """
     output_directory = os.path.splitext(os.path.basename(file_path))[0] + "_sheet_music"
     
     converter = AudioToSheetMusicConverter()
     converter.initialize_audio_data(file_path)
     converter.initialize_audio_parameters(note_min, note_max, onset_method)
     converter.convert_to_notes()
-    pdf_path = converter.generate_sheet_music(output_directory=output_directory)
     
-    return pdf_path
+    if output_format.lower() == "text":
+        return converter.generate_text_notes(output_directory=output_directory)
+    else:
+        return converter.generate_sheet_music(output_directory=output_directory)
 
 
 def main():
@@ -318,6 +366,8 @@ def main():
     parser.add_argument('--max-note', type=str, default='C6', help='Maximum note to detect (e.g., C6)')
     parser.add_argument('--onset-method', type=int, default=1, choices=[0, 1, 2], 
                         help='Onset detection method: 0=Mean(Mel), 1=Median(Mel), 2=Mean(CQT)')
+    parser.add_argument('--format', type=str, default='lily', choices=['lily', 'text'],
+                        help='Output format: lily for LilyPond/PDF/PNG, text for simple text notes (C, D, A, etc.)')
     
     args = parser.parse_args()
     
@@ -342,13 +392,14 @@ def main():
     for file_path in audio_files:
         print(f"\nProcessing: {file_path}")
         try:
-            pdf_path = process_audio_file(
+            output_path = process_audio_file(
                 file_path, 
                 note_min=args.min_note,
                 note_max=args.max_note,
-                onset_method=args.onset_method
+                onset_method=args.onset_method,
+                output_format=args.format
             )
-            print(f"Successfully converted {file_path} to sheet music: {pdf_path}")
+            print(f"Successfully converted {file_path} to {'text notes' if args.format == 'text' else 'sheet music'}: {output_path}")
         except Exception as e:
             print(f"Error processing {file_path}: {str(e)}")
 
