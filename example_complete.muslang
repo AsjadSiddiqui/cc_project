@@ -1,0 +1,37 @@
+# MusLang example with if-else statements and arithmetic
+# This demonstrates all required functionality for the compiler construction course
+
+# Declare variables
+C F♯ C♯ 10      # x = 10
+C F♯ C♯ 5       # y = 5
+
+# Arithmetic operations
+C F♯ C♯ E C♯ C♯ # z = x + y
+E C♯            # print z
+
+# If-else statement
+G G G            # if 
+C♯ F♯ F♯ C♯     # x > y
+C C C            # begin then block
+E "x is greater than y"
+E E E            # end if
+
+# Loop demonstration
+A♯ A♯ A♯        # for loop
+A♯ B            # in
+C♯ D♯ 3         # range 3
+C C C           # begin loop body
+E C♯            # print z in each iteration
+C♯ E E          # z = z + 1 (increment z each iteration)
+B B B           # end loop body
+
+# Nested if with else
+G G G            # if
+C♯ G♯ G♯ 20     # z == 20
+C C C            # begin then block
+E "z is exactly 20"
+E E E            # end if
+F F F            # else
+C C C            # begin else block
+E "z is not 20"
+E E E            # end else
