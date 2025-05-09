@@ -63,10 +63,15 @@
      tok_less_than = 279,
      tok_greater_than = 280,
      tok_increment = 281,
-     tok_identifier = 282,
-     tok_int_literal = 283,
-     tok_float_literal = 284,
-     tok_string_literal = 285
+     tok_print_anon = 282,
+     tok_add_anon_vars = 283,
+     tok_if_equals_20_start = 284,
+     tok_else_block = 285,
+     tok_identifier = 286,
+     tok_int_literal = 287,
+     tok_float_literal = 288,
+     tok_string_literal = 289,
+     tok_end = 290
    };
 #endif
 /* Tokens.  */
@@ -94,10 +99,15 @@
 #define tok_less_than 279
 #define tok_greater_than 280
 #define tok_increment 281
-#define tok_identifier 282
-#define tok_int_literal 283
-#define tok_float_literal 284
-#define tok_string_literal 285
+#define tok_print_anon 282
+#define tok_add_anon_vars 283
+#define tok_if_equals_20_start 284
+#define tok_else_block 285
+#define tok_identifier 286
+#define tok_int_literal 287
+#define tok_float_literal 288
+#define tok_string_literal 289
+#define tok_end 290
 
 
 
@@ -113,7 +123,7 @@ typedef union YYSTYPE
 	llvm::Value* value; 
 }
 /* Line 1529 of yacc.c.  */
-#line 117 "muslang.tab.h"
+#line 127 "muslang.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

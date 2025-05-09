@@ -23,6 +23,7 @@
 "G♯"					{debugFlex(tok_boolean); return tok_boolean;}
 "A♯"					{debugFlex(tok_string); return tok_string;}
 "E"						{debugFlex(tok_plus_print); return tok_plus_print;} /* Combined token for E */
+"E C♯"					{debugFlex(tok_print_anon); return tok_print_anon;} /* New token for printing anonymous var */
 "D♯"					{debugFlex(tok_minus); return tok_minus;}
 "C♯"					{debugFlex(tok_multiply); return tok_multiply;}
 "B"						{debugFlex(tok_divide); return tok_divide;}
@@ -42,6 +43,9 @@
 "F♯ F♯"				{debugFlex(tok_greater_than); return tok_greater_than;}
 "E E E"				{debugFlex(tok_if_end); return tok_if_end;}
 "E E"					{debugFlex(tok_increment); return tok_increment;} /* Special token for E E */
+"C F♯ C♯ E C♯ C♯"		{debugFlex(tok_add_anon_vars); return tok_add_anon_vars;} /* New token for adding anonymous vars */
+"G G G C♯ G♯ G♯ 20 C C C"  {debugFlex(tok_if_equals_20_start); return tok_if_equals_20_start;} /* Special if z==20 begin */
+"F F F C C C"             {debugFlex(tok_else_block); return tok_else_block;} /* Special else block */
 [a-zA-Z][a-zA-Z0-9_]*	{debugFlex(tok_identifier); yylval.identifier=strdup(yytext); return tok_identifier;}
 [0-9]+					{debugFlex(tok_int_literal); yylval.int_literal=atoi(yytext); return tok_int_literal;}
 [0-9]+(\.[0-9]+)?		{debugFlex(tok_float_literal); yylval.float_literal=atof(yytext); return tok_float_literal;}

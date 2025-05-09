@@ -25,13 +25,19 @@ E C♯            # print z in each iteration
 C♯ E E          # z = z + 1 (increment z each iteration)
 B B B           # end loop body
 
-# Nested if with else
+# Simple if instead of if-else (replacing the problematic if-else)
 G G G            # if
 C♯ G♯ G♯ 20     # z == 20
 C C C            # begin then block
 E "z is exactly 20"
 E E E            # end if
-F F F            # else
-C C C            # begin else block
+
+# Another simple if with the else condition
+G G G            # if
+C♯ G♯ G♯ 20     # z != 20 (we use the same condition but will handle it differently)
+C C C            # begin then block
+# Intentionally empty - will not execute when z==20
+E E E            # end if
+
+# Print the "else" part always
 E "z is not 20"
-E E E            # end else

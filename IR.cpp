@@ -29,8 +29,13 @@ void initLLVM() {
     builder.SetInsertPoint(entry);
 }
 
+/**
+ * This function is completely disabled to avoid affecting parsing.
+ * All return handling is now done in main() after parsing is complete.
+ */
 void addReturnInstr() {
-    builder.CreateRet(ConstantInt::get(context, APInt(32, 0)));
+    // Completely disabled - do nothing
+    return;
 }
 
 Value *createDoubleConstant(double val) {
@@ -158,8 +163,7 @@ void createIfStatement(Value *condition) {
     IfInfo ifInfo = {thenBlock, nullptr, mergeBlock, condition};
     ifStack.push(ifInfo);
 
-    // We'll add the branch to merge block after the then body is processed
-    // Don't add branch here: builder.CreateBr(mergeBlock);
+    // Don't add branch to merge block yet - that will be done when handling E E E token
 }
 
 // Creates the if-else statement structure
@@ -177,23 +181,16 @@ void createIfElseStatement(Value *condition) {
 
     // Set insert point to then block
 
-    // Store for nested usage - body code is handled by bison
-    IfInfo ifInfo = {thenBlock, elseBlock, mergeBlock, condition};
+    // Store for nested usage - the if-else structure
+    IfInfo ifInfo;
+    ifInfo.thenBlock = thenBlock;
+    ifInfo.elseBlock = elseBlock;
+    ifInfo.mergeBlock = mergeBlock;
+    ifInfo.condition = condition;
+
     ifStack.push(ifInfo);
 
-    // Add unconditional branch from 'then' to 'merge'
-    builder.CreateBr(mergeBlock);
-
-    // Set insertion point to else block
-    builder.SetInsertPoint(elseBlock);
-
-    // Body code is inserted by bison
-
-    // Add unconditional branch from 'else' to 'merge'
-    builder.CreateBr(mergeBlock);
-
-    // Set insertion point to merge block for code after if-else
-    builder.SetInsertPoint(mergeBlock);
+    // We will NOT add branches yet - they'll be added when we process tokens
 }
 
 // Creates the beginning of a for loop
