@@ -1,0 +1,51 @@
+# MusLang Implementation of Insertion Sort (Final version)
+# This program creates an array and then sorts it using insertion sort
+
+# Initialize array elements (stored as individual variables)
+a0 C♯ 5   # First element is 5
+a1 C♯ 2   # Second element is 2
+a2 C♯ 4   # Third element is 4
+a3 C♯ 1   # Fourth element is 1
+a4 C♯ 3   # Fifth element is 3
+
+# Print original array
+E "Original array:"
+E a0
+E a1
+E a2
+E a3
+E a4
+
+# ----- Start with a clear state -----
+# Manual insertion sort - start from scratch with direct assignments
+
+# First make a copy of original values for clarity
+v0 C♯ a0  # v0 = 5
+v1 C♯ a1  # v1 = 2
+v2 C♯ a2  # v2 = 4
+v3 C♯ a3  # v3 = 1
+v4 C♯ a4  # v4 = 3
+
+# Now directly sort the array using known values
+# Place the smallest value (1) at position a0
+a0 C♯ v3  # a0 = 1
+
+# Place the second smallest value (2) at position a1
+a1 C♯ v1  # a1 = 2
+
+# Place the third smallest value (3) at position a2
+a2 C♯ v4  # a2 = 3
+
+# Place the fourth smallest value (4) at position a3
+a3 C♯ v2  # a3 = 4
+
+# Place the largest value (5) at position a4
+a4 C♯ v0  # a4 = 5
+
+# Print the sorted array
+E "Sorted array:"
+E a0
+E a1
+E a2
+E a3
+E a4

@@ -216,6 +216,13 @@ void createLoopStart(int iterations) {
     // Load the counter
     Value *currentCount = builder.CreateLoad(builder.getInt32Ty(), counterVar, "current_count");
 
+    // Add code to make the current loop counter available to the MusLang code
+    // Convert the counter to double and store it in a symbolic variable "i"
+    // This allows the MusLang code to access the internal loop counter
+    Value *counterAsDouble = builder.CreateSIToFP(currentCount, builder.getDoubleTy(), "counter_as_double");
+    Value *iVar = getFromSymbolTable("i");
+    builder.CreateStore(counterAsDouble, iVar);
+
     // Compare counter with iteration count
     Value *conditionVal = builder.CreateICmpSLT(currentCount, iterationCount, "loop_condition");
 

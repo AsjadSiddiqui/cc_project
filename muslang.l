@@ -7,10 +7,13 @@
 	#include <string>
 	extern void yyerror(const char *msg);
 	
+	// Global debug flag (default to off)
+	extern int debug_mode;
+	
 	#define DEBUGML
 	//This code is for producing debug output.
 	#ifdef DEBUGML
-		#define debugFlex(a) (printf("\n%d: Token=<ID, lexeme>=<%d, %s>\n",yylineno, a, yytext))
+		#define debugFlex(a) (debug_mode ? printf("\n%d: Token=<ID, lexeme>=<%d, %s>\n",yylineno, a, yytext) : 0)
 	#else
 		#define debugFlex(a)
 	#endif

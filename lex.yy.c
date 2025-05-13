@@ -560,15 +560,18 @@ char *yytext;
 	#include <string>
 	extern void yyerror(const char *msg);
 	
+	// Global debug flag (default to off)
+	extern int debug_mode;
+	
 	#define DEBUGML
 	//This code is for producing debug output.
 	#ifdef DEBUGML
-		#define debugFlex(a) (printf("\n%d: Token=<ID, lexeme>=<%d, %s>\n",yylineno, a, yytext))
+		#define debugFlex(a) (debug_mode ? printf("\n%d: Token=<ID, lexeme>=<%d, %s>\n",yylineno, a, yytext) : 0)
 	#else
 		#define debugFlex(a)
 	#endif
-#line 570 "lex.yy.c"
-#line 571 "lex.yy.c"
+#line 573 "lex.yy.c"
+#line 574 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -785,9 +788,9 @@ YY_DECL
 		}
 
 	{
-#line 20 "muslang.l"
+#line 23 "muslang.l"
 
-#line 790 "lex.yy.c"
+#line 793 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -856,187 +859,187 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 21 "muslang.l"
+#line 24 "muslang.l"
 {debugFlex(tok_integer); return tok_integer;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 22 "muslang.l"
+#line 25 "muslang.l"
 {debugFlex(tok_float); return tok_float;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 23 "muslang.l"
+#line 26 "muslang.l"
 {debugFlex(tok_boolean); return tok_boolean;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 24 "muslang.l"
+#line 27 "muslang.l"
 {debugFlex(tok_string); return tok_string;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 25 "muslang.l"
+#line 28 "muslang.l"
 {debugFlex(tok_plus_print); return tok_plus_print;} /* Combined token for E */
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 26 "muslang.l"
+#line 29 "muslang.l"
 {debugFlex(tok_print_anon); return tok_print_anon;} /* New token for printing anonymous var */
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 27 "muslang.l"
+#line 30 "muslang.l"
 {debugFlex(tok_minus); return tok_minus;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 28 "muslang.l"
+#line 31 "muslang.l"
 {debugFlex(tok_multiply); return tok_multiply;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 29 "muslang.l"
+#line 32 "muslang.l"
 {debugFlex(tok_divide); return tok_divide;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 30 "muslang.l"
+#line 33 "muslang.l"
 {debugFlex(tok_and); return tok_and;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 31 "muslang.l"
+#line 34 "muslang.l"
 {debugFlex(tok_or); return tok_or;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 32 "muslang.l"
+#line 35 "muslang.l"
 {debugFlex(tok_not); return tok_not;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 33 "muslang.l"
+#line 36 "muslang.l"
 {debugFlex(tok_var); return tok_var;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 34 "muslang.l"
+#line 37 "muslang.l"
 {debugFlex(tok_for_start); return tok_for_start;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 35 "muslang.l"
+#line 38 "muslang.l"
 {debugFlex(tok_in); return tok_in;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 36 "muslang.l"
+#line 39 "muslang.l"
 {debugFlex(tok_range); return tok_range;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 37 "muslang.l"
+#line 40 "muslang.l"
 {debugFlex(tok_loop_start); return tok_loop_start;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 38 "muslang.l"
+#line 41 "muslang.l"
 {debugFlex(tok_loop_end); return tok_loop_end;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 39 "muslang.l"
+#line 42 "muslang.l"
 {debugFlex(tok_if); return tok_if;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 40 "muslang.l"
+#line 43 "muslang.l"
 {debugFlex(tok_else); return tok_else;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 41 "muslang.l"
+#line 44 "muslang.l"
 {debugFlex(tok_equal); return tok_equal;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 42 "muslang.l"
+#line 45 "muslang.l"
 {debugFlex(tok_less_than); return tok_less_than;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 43 "muslang.l"
+#line 46 "muslang.l"
 {debugFlex(tok_greater_than); return tok_greater_than;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 44 "muslang.l"
+#line 47 "muslang.l"
 {debugFlex(tok_if_end); return tok_if_end;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 45 "muslang.l"
+#line 48 "muslang.l"
 {debugFlex(tok_increment); return tok_increment;} /* Special token for E E */
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 46 "muslang.l"
+#line 49 "muslang.l"
 {debugFlex(tok_add_anon_vars); return tok_add_anon_vars;} /* New token for adding anonymous vars */
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 47 "muslang.l"
+#line 50 "muslang.l"
 {debugFlex(tok_if_equals_20_start); return tok_if_equals_20_start;} /* Special if z==20 begin */
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 48 "muslang.l"
+#line 51 "muslang.l"
 {debugFlex(tok_else_block); return tok_else_block;} /* Special else block */
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 49 "muslang.l"
+#line 52 "muslang.l"
 {debugFlex(tok_identifier); yylval.identifier=strdup(yytext); return tok_identifier;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 50 "muslang.l"
+#line 53 "muslang.l"
 {debugFlex(tok_int_literal); yylval.int_literal=atoi(yytext); return tok_int_literal;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 51 "muslang.l"
+#line 54 "muslang.l"
 {debugFlex(tok_float_literal); yylval.float_literal=atof(yytext); return tok_float_literal;}
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
-#line 52 "muslang.l"
+#line 55 "muslang.l"
 {debugFlex(tok_string_literal); yylval.string_literal=strdup(yytext); return tok_string_literal;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 53 "muslang.l"
+#line 56 "muslang.l"
 {;} /* Comments */
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 54 "muslang.l"
+#line 57 "muslang.l"
 {;} /* Ignore whitespace */
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 55 "muslang.l"
+#line 58 "muslang.l"
 {debugFlex(-1); yyerror("illegal lexeme"); exit(EXIT_FAILURE);}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 56 "muslang.l"
+#line 59 "muslang.l"
 ECHO;
 	YY_BREAK
-#line 1039 "lex.yy.c"
+#line 1042 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2053,5 +2056,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 56 "muslang.l"
+#line 59 "muslang.l"
 

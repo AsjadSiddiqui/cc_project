@@ -116,7 +116,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 48 "muslang.y"
+#line 51 "muslang.y"
 {
 	char *identifier;
 	int int_literal;

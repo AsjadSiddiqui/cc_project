@@ -8,6 +8,9 @@
 	extern int yylex();
 	extern FILE *yyin;
 	
+	// Global debug flag
+	int debug_mode = 0;
+	
 	// Counter for anonymous variables
 	static int anonVarCounter = 0;
 	std::string getNextAnonVarName() {
@@ -29,7 +32,7 @@
 	// Helper function to get an anonymous variable by index
 	Value* getAnonVar(int index) {
 		if (index < 0 || index >= anonVarCounter) {
-			fprintf(stderr, "Anonymous variable index out of range\n");
+			if (debug_mode) fprintf(stderr, "Anonymous variable index out of range\n");
 			exit(EXIT_FAILURE);
 		}
 		std::string name = "anon" + std::to_string(index);
@@ -40,7 +43,7 @@
 	#define DEBUGBISON
 	//This code is for producing debug output.
 	#ifdef DEBUGBISON
-		#define debugBison(a) (printf("\n%d \n",a))
+		#define debugBison(a) (debug_mode ? printf("\n%d \n",a) : 0)
 	#else
 		#define debugBison(a)
 	#endif
@@ -88,7 +91,16 @@ program:
 	/* empty */				{debugBison(1);}
 	| statement program		{debugBison(2);}
 	| statement             {debugBison(2);} /* Allow the last statement without requiring another statement after it */
-	| error END             {debugBison(998); YYACCEPT; /* Handle errors that extend to EOF and stop parsing */}
+	| error {
+		debugBison(997);
+		yyerrok; /* Try to recover from errors wherever they occur */
+		yyclearin; /* Clear the lookahead token */
+	} program /* Continue parsing after error */
+	| error END {
+		debugBison(998); 
+		yyerrok; /* Handle errors that extend to EOF */
+		YYACCEPT; /* Accept what we've parsed so far */
+	}
 	;
 
 /* Add specific handlers for the new composite tokens */
@@ -145,6 +157,10 @@ statement:
 		debugBison(999); 
 		yyerrok; /* Error recovery - consume the token and continue */
 		YYABORT; /* Stop parsing to prevent infinite loops */
+	}
+	| error {
+		debugBison(996);
+		yyerrok; /* Recover from errors in statements too */
 	}
 	;
 
@@ -456,27 +472,41 @@ print_anon_var:
     ;
 %%
 int main(int argc, char** argv) {
-	if (argc > 1) {
-		FILE *fp = fopen(argv[1], "r");
-		yyin = fp; //read from file when its name is provided.
-	} 
-	if (yyin == NULL) { 
-		yyin = stdin; //otherwise read from terminal
+	// Process command line arguments
+	bool fileProvided = false;
+	
+	for (int i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "--debug") == 0 || strcmp(argv[i], "-d") == 0) {
+			debug_mode = 1;
+			if (debug_mode) fprintf(stderr, "Debug mode enabled\n");
+		} else {
+			// Assume it's the input file
+			FILE *fp = fopen(argv[i], "r");
+			if (fp) {
+				yyin = fp;
+				fileProvided = true;
+			} else {
+				fprintf(stderr, "Error: Could not open file '%s'\n", argv[i]);
+				return EXIT_FAILURE;
+			}
+		}
 	}
 	
-	//Function that initialize LLVM
+	if (!fileProvided) { 
+		yyin = stdin; // Read from terminal if no file provided
+	}
+	
+	// Initialize LLVM
 	initLLVM();
 	
-	//yyparse will call internally yylex
-	//It will get a token and insert it into AST
+	// Parse the input
 	int parserResult = yyparse();
 	
-	// Intentionally ignore the syntax error at EOF - it's a grammar handling issue
-	// that doesn't affect the correctness of our IR generation
+	// Handle parser result - ignore EOF syntax error
 	if (parserResult != 0) {
-		fprintf(stderr, "Parser reported error code %d (ignoring EOF syntax error)\n", parserResult);
+		if (debug_mode) fprintf(stderr, "Parser reported error code %d (ignoring EOF syntax error)\n", parserResult);
 	} else {
-		fprintf(stderr, "Parsing completed successfully\n");
+		if (debug_mode) fprintf(stderr, "Parsing completed successfully\n");
 	}
 	
 	// Handle any unclosed control structures
@@ -514,7 +544,7 @@ int main(int argc, char** argv) {
 	BasicBlock *currentBlock = builder.GetInsertBlock();
 	if (currentBlock && !currentBlock->getTerminator()) {
 		builder.CreateRet(ConstantInt::get(context, APInt(32, 0)));
-		fprintf(stderr, "Added final return instruction to program\n");
+		if (debug_mode) fprintf(stderr, "Added final return instruction to program\n");
 	}
 	
 	// Print the LLVM IR - always do this even if there were parsing errors

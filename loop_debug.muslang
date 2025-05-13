@@ -1,0 +1,38 @@
+# MusLang Loop Debugging Example (Revised for better loop testing)
+# This program tests the loop functionality in MusLang
+
+# Initialize counter and sum variables
+sum C♯ 0  # Sum accumulator
+
+# Print initial values
+E "Initial values:"
+E "sum = "
+E sum
+
+# Simple for loop that counts from 0 to 4 and accumulates values
+A♯ A♯ A♯       # for loop
+A♯ B           # in
+C♯ D♯ 5        # range 5 (iterate 5 times)
+C C C          # begin loop body
+
+    # Get the internal loop counter value by looking at memory
+    i C♯ 0     # This will be automatically updated by the loop mechanism
+    
+    # Print current iteration
+    E "Loop iteration:"
+    E i
+    
+    # Add current counter to sum
+    sum C♯ sum E i
+    
+    # Print current sum
+    E "Current sum:"
+    E sum
+    
+B B B          # end loop body
+
+# Print final values
+E "Final values:"
+E "sum = "
+E sum
+E "Expected sum = 10 (0+1+2+3+4)"

@@ -19,6 +19,8 @@ LIBS := $(shell $(LLVM_CONFIG) --libs core)
 # Target and input files
 TARGET := muslangc
 SAMPLE := sample.muslang
+INSERTION_SORT := insertion_sort.muslang
+LOOP_DEBUG := loop_debug.muslang
 
 all: $(TARGET)
 
@@ -53,12 +55,36 @@ run: all
 	$(CC) output.o -o output
 	./output
 
+# Run insertion sort example
+run_insertion_sort: all
+	./$(TARGET) $(INSERTION_SORT) > insertion_sort.ll
+	$(LLC) -filetype=obj insertion_sort.ll -o insertion_sort.o
+	$(CC) insertion_sort.o -o insertion_sort
+	./insertion_sort
+
+run_generated_insertion_sort: all
+	$(LLC) -filetype=obj insertion_sort.ll -o insertion_sort.o
+	$(CC) insertion_sort.o -o insertion_sort
+	./insertion_sort
+
+# Run loop debugging example
+run_loop_debug: all
+	./$(TARGET) $(LOOP_DEBUG) > loop_debug.ll
+	$(LLC) -filetype=obj loop_debug.ll -o loop_debug.o
+	$(CC) loop_debug.o -o loop_debug
+	./loop_debug
+
+run_generated_loop_debug: all
+	$(LLC) -filetype=obj loop_debug.ll -o loop_debug.o
+	$(CC) loop_debug.o -o loop_debug
+	./loop_debug
+
 # Run LLVM IR generation only
 generate: all
 	./$(TARGET) $(SAMPLE) > output.ll
 
 # Clean build files
 clean:
-	rm -f *.o lex.yy.c muslang.tab.c muslang.tab.h $(TARGET) output output.o output.ll
+	rm -f *.o lex.yy.c muslang.tab.c muslang.tab.h $(TARGET) output output.o output.ll insertion_sort insertion_sort.o insertion_sort.ll loop_debug loop_debug.o loop_debug.ll
 
-.PHONY: all run generate clean
+.PHONY: all run run_insertion_sort generate clean
