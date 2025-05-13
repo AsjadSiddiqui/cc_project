@@ -39,6 +39,7 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
+     END = 0,
      tok_integer = 258,
      tok_float = 259,
      tok_boolean = 260,
@@ -75,6 +76,7 @@
    };
 #endif
 /* Tokens.  */
+#define END 0
 #define tok_integer 258
 #define tok_float 259
 #define tok_boolean 260
@@ -123,7 +125,7 @@ typedef union YYSTYPE
 	llvm::Value* value; 
 }
 /* Line 1529 of yacc.c.  */
-#line 127 "muslang.tab.h"
+#line 129 "muslang.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -41,3 +41,5 @@ E E E            # end if
 
 # Print the "else" part always
 E "z is not 20"
+
+# Adding an explicit empty line to terminate the file properly

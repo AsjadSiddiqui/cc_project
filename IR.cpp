@@ -30,11 +30,11 @@ void initLLVM() {
 }
 
 /**
- * This function is completely disabled to avoid affecting parsing.
- * All return handling is now done in main() after parsing is complete.
+ * This function is completely disabled to avoid interfering with parsing.
+ * Return instructions are now handled in main() after parsing is complete.
  */
 void addReturnInstr() {
-    // Completely disabled - do nothing
+    // Do nothing - all return handling is now in main()
     return;
 }
 
