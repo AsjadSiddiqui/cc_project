@@ -72,7 +72,8 @@
      tok_int_literal = 287,
      tok_float_literal = 288,
      tok_string_literal = 289,
-     tok_end = 290
+     tok_end = 290,
+     LOWER_THAN_ELSE = 291
    };
 #endif
 /* Tokens.  */
@@ -110,6 +111,7 @@
 #define tok_float_literal 288
 #define tok_string_literal 289
 #define tok_end 290
+#define LOWER_THAN_ELSE 291
 
 
 
@@ -125,7 +127,7 @@ typedef union YYSTYPE
 	llvm::Value* value; 
 }
 /* Line 1529 of yacc.c.  */
-#line 129 "muslang.tab.h"
+#line 131 "muslang.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

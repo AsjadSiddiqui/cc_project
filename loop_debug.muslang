@@ -15,8 +15,8 @@ A♯ B           # in
 C♯ D♯ 5        # range 5 (iterate 5 times)
 C C C          # begin loop body
 
-    # Get the internal loop counter value by looking at memory
-    i C♯ 0     # This will be automatically updated by the loop mechanism
+    # The i variable is automatically set by the loop mechanism
+    # No need to initialize it again!
     
     # Print current iteration
     E "Loop iteration:"

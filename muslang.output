@@ -3,1187 +3,1365 @@ Terminals which are not used
    tok_and
    tok_or
    tok_not
+   tok_if_equals_20_start
+   tok_else_block
+   tok_end
+   LOWER_THAN_ELSE
 
 
-State 5 conflicts: 2 shift/reduce
-State 9 conflicts: 1 shift/reduce
-State 16 conflicts: 10 reduce/reduce
-State 37 conflicts: 1 shift/reduce
-State 38 conflicts: 1 shift/reduce
-State 44 conflicts: 1 shift/reduce
-State 45 conflicts: 1 shift/reduce
-State 46 conflicts: 1 shift/reduce
-State 57 conflicts: 10 reduce/reduce
-State 59 conflicts: 10 reduce/reduce
-State 83 conflicts: 1 shift/reduce
-State 84 conflicts: 1 shift/reduce
+State 6 conflicts: 2 shift/reduce
+State 13 conflicts: 2 shift/reduce
+State 42 conflicts: 1 shift/reduce
+State 43 conflicts: 1 shift/reduce
+State 49 conflicts: 2 shift/reduce
+State 57 conflicts: 1 shift/reduce
+State 60 conflicts: 14 reduce/reduce
+State 62 conflicts: 14 reduce/reduce
+State 78 conflicts: 1 shift/reduce
+State 79 conflicts: 1 shift/reduce
+State 80 conflicts: 1 shift/reduce
+State 81 conflicts: 1 shift/reduce
+State 91 conflicts: 1 shift/reduce
+State 96 conflicts: 1 shift/reduce
 
 
 Grammar
 
-    0 $accept: program $end
+    0 $accept: program "end of file"
 
     1 program: /* empty */
     2        | statement program
+    3        | error "end of file"
 
-    3 statement: declaration
-    4          | output
-    5          | loop
-    6          | conditional
-    7          | special_token
+    4 statement: tok_add_anon_vars
+    5          | tok_print_anon
+    6          | add_anon_vars
+    7          | declaration
+    8          | output
+    9          | loop
+   10          | conditional
+   11          | special_token
+   12          | string_print
 
-    8 declaration: tok_var tok_string tok_multiply
-    9            | tok_var tok_integer tok_multiply
-   10            | tok_var tok_float tok_multiply
-   11            | tok_var tok_boolean tok_multiply
-   12            | tok_var tok_integer tok_multiply tok_int_literal
-   13            | tok_var tok_integer tok_multiply tok_plus_print tok_multiply tok_multiply
-   14            | tok_var tok_integer tok_multiply expression
-   15            | tok_var tok_float tok_multiply tok_float_literal
-   16            | tok_var tok_float tok_multiply expression
-   17            | assignment
+   13 string_print: tok_plus_print tok_string_literal
 
-   18 assignment: tok_identifier tok_multiply expression
-   19           | tok_multiply tok_increment
+   14 declaration: tok_var tok_string tok_multiply
+   15            | tok_var tok_integer tok_multiply
+   16            | tok_var tok_float tok_multiply
+   17            | tok_var tok_boolean tok_multiply
+   18            | tok_var tok_integer tok_multiply tok_int_literal
+   19            | tok_var tok_integer tok_multiply expression
+   20            | tok_var tok_float tok_multiply tok_float_literal
+   21            | tok_var tok_float tok_multiply expression
+   22            | assignment
 
-   20 output: tok_plus_print term
-   21       | tok_plus_print tok_string_literal
-   22       | tok_plus_print tok_multiply
+   23 assignment: tok_identifier tok_multiply expression
+   24           | tok_identifier tok_multiply tok_identifier tok_plus_print expression
+   25           | tok_multiply tok_increment
 
-   23 loop: tok_for_start tok_in tok_range tok_int_literal tok_loop_start program tok_loop_end
+   26 output: tok_plus_print term
 
-   24 conditional: tok_if condition tok_loop_start program tok_if_end
-   25            | tok_if condition tok_loop_start program tok_else tok_loop_start program tok_if_end
-   26            | tok_if compare_anon_vars tok_loop_start program tok_if_end
-   27            | tok_if compare_anon_const tok_loop_start program tok_if_end
-   28            | tok_if compare_anon_const tok_loop_start program tok_else tok_loop_start program tok_if_end
+   27 loop: tok_for_start tok_in tok_range tok_int_literal tok_loop_start program tok_loop_end
 
-   29 compare_anon_vars: tok_multiply tok_greater_than tok_multiply
+   28 conditional: tok_if condition tok_loop_start program tok_if_end
+   29            | tok_if condition tok_loop_start program tok_else program tok_if_end
+   30            | tok_if condition tok_loop_start program tok_loop_start program tok_if_end
+   31            | tok_if tok_multiply tok_equal tok_int_literal tok_loop_start program tok_if_end tok_else tok_loop_start program tok_if_end
+   32            | tok_if tok_multiply tok_greater_than tok_multiply tok_loop_start program tok_if_end
+   33            | tok_if tok_multiply tok_equal tok_int_literal tok_loop_start program tok_if_end
 
-   30 compare_anon_const: tok_multiply tok_equal tok_int_literal
+   34 condition: expression tok_equal expression
+   35          | expression tok_less_than expression
+   36          | expression tok_greater_than expression
 
-   31 condition: expression tok_equal expression
-   32          | expression tok_less_than expression
-   33          | expression tok_greater_than expression
+   37 term: tok_identifier
+   38     | tok_int_literal
+   39     | tok_float_literal
+   40     | tok_multiply
 
-   34 term: tok_identifier
-   35     | tok_int_literal
-   36     | tok_float_literal
-   37     | tok_multiply
+   41 expression: term
+   42           | expression tok_plus_print expression
+   43           | expression tok_minus expression
+   44           | expression tok_multiply expression
+   45           | expression tok_divide expression
 
-   38 expression: term
-   39           | expression tok_plus_print expression
-   40           | expression tok_minus expression
-   41           | expression tok_multiply expression
-   42           | expression tok_divide expression
+   46 special_token: tok_if_end
+   47              | tok_else
+   48              | tok_if
 
-   43 special_token: tok_if_end
-   44              | tok_if
+   49 add_anon_vars: tok_var tok_integer tok_multiply tok_plus_print tok_multiply tok_multiply
 
 
 Terminals, with rules where they appear
 
-$end (0) 0
-error (256)
-tok_integer (258) 9 12 13 14
-tok_float (259) 10 15 16
-tok_boolean (260) 11
-tok_string (261) 8
-tok_plus_print (262) 13 20 21 22 39
-tok_minus (263) 40
-tok_multiply (264) 8 9 10 11 12 13 14 15 16 18 19 22 29 30 37 41
-tok_divide (265) 42
+"end of file" (0) 0 3
+error (256) 3
+tok_integer (258) 15 18 19 49
+tok_float (259) 16 20 21
+tok_boolean (260) 17
+tok_string (261) 14
+tok_plus_print (262) 13 24 26 42 49
+tok_minus (263) 43
+tok_multiply (264) 14 15 16 17 18 19 20 21 23 24 25 31 32 33 40 44
+    49
+tok_divide (265) 45
 tok_and (266)
 tok_or (267)
 tok_not (268)
-tok_var (269) 8 9 10 11 12 13 14 15 16
-tok_for_start (270) 23
-tok_in (271) 23
-tok_range (272) 23
-tok_loop_start (273) 23 24 25 26 27 28
-tok_loop_end (274) 23
-tok_if (275) 24 25 26 27 28 44
-tok_else (276) 25 28
-tok_if_end (277) 24 25 26 27 28 43
-tok_equal (278) 30 31
-tok_less_than (279) 32
-tok_greater_than (280) 29 33
-tok_increment (281) 19
-tok_identifier (282) 18 34
-tok_int_literal (283) 12 23 30 35
-tok_float_literal (284) 15 36
-tok_string_literal (285) 21
+tok_var (269) 14 15 16 17 18 19 20 21 49
+tok_for_start (270) 27
+tok_in (271) 27
+tok_range (272) 27
+tok_loop_start (273) 27 28 29 30 31 32 33
+tok_loop_end (274) 27
+tok_if (275) 28 29 30 31 32 33 48
+tok_else (276) 29 31 47
+tok_if_end (277) 28 29 30 31 32 33 46
+tok_equal (278) 31 33 34
+tok_less_than (279) 35
+tok_greater_than (280) 32 36
+tok_increment (281) 25
+tok_print_anon (282) 5
+tok_add_anon_vars (283) 4
+tok_if_equals_20_start (284)
+tok_else_block (285)
+tok_identifier (286) 23 24 37
+tok_int_literal (287) 18 27 31 33 38
+tok_float_literal (288) 20 39
+tok_string_literal (289) 13
+tok_end (290)
+LOWER_THAN_ELSE (291)
 
 
 Nonterminals, with rules where they appear
 
-$accept (31)
+$accept (37)
     on left: 0
-program (32)
-    on left: 1 2, on right: 0 2 23 24 25 26 27 28
-statement (33)
-    on left: 3 4 5 6 7, on right: 2
-declaration (34)
-    on left: 8 9 10 11 12 13 14 15 16 17, on right: 3
-assignment (35)
-    on left: 18 19, on right: 17
-output (36)
-    on left: 20 21 22, on right: 4
-loop (37)
-    on left: 23, on right: 5
-conditional (38)
-    on left: 24 25 26 27 28, on right: 6
-compare_anon_vars (39)
-    on left: 29, on right: 26
-compare_anon_const (40)
-    on left: 30, on right: 27 28
-condition (41)
-    on left: 31 32 33, on right: 24 25
-term (42)
-    on left: 34 35 36 37, on right: 20 38
-expression (43)
-    on left: 38 39 40 41 42, on right: 14 16 18 31 32 33 39 40 41 42
-special_token (44)
-    on left: 43 44, on right: 7
+program (38)
+    on left: 1 2 3, on right: 0 2 27 28 29 30 31 32 33
+statement (39)
+    on left: 4 5 6 7 8 9 10 11 12, on right: 2
+string_print (40)
+    on left: 13, on right: 12
+declaration (41)
+    on left: 14 15 16 17 18 19 20 21 22, on right: 7
+assignment (42)
+    on left: 23 24 25, on right: 22
+output (43)
+    on left: 26, on right: 8
+loop (44)
+    on left: 27, on right: 9
+conditional (45)
+    on left: 28 29 30 31 32 33, on right: 10
+condition (46)
+    on left: 34 35 36, on right: 28 29 30
+term (47)
+    on left: 37 38 39 40, on right: 26 41
+expression (48)
+    on left: 41 42 43 44 45, on right: 19 21 23 24 34 35 36 42 43 44
+    45
+special_token (49)
+    on left: 46 47 48, on right: 11
+add_anon_vars (50)
+    on left: 49, on right: 6
 
 
 state 0
 
-    0 $accept: . program $end
+    0 $accept: . program "end of file"
 
-    tok_plus_print  shift, and go to state 1
-    tok_multiply    shift, and go to state 2
-    tok_var         shift, and go to state 3
-    tok_for_start   shift, and go to state 4
-    tok_if          shift, and go to state 5
-    tok_if_end      shift, and go to state 6
-    tok_identifier  shift, and go to state 7
+    error              shift, and go to state 1
+    tok_plus_print     shift, and go to state 2
+    tok_multiply       shift, and go to state 3
+    tok_var            shift, and go to state 4
+    tok_for_start      shift, and go to state 5
+    tok_if             shift, and go to state 6
+    tok_else           shift, and go to state 7
+    tok_if_end         shift, and go to state 8
+    tok_print_anon     shift, and go to state 9
+    tok_add_anon_vars  shift, and go to state 10
+    tok_identifier     shift, and go to state 11
 
-    $default  reduce using rule 1 (program)
+    "end of file"  reduce using rule 1 (program)
 
-    program        go to state 8
-    statement      go to state 9
-    declaration    go to state 10
-    assignment     go to state 11
-    output         go to state 12
-    loop           go to state 13
-    conditional    go to state 14
-    special_token  go to state 15
+    program        go to state 12
+    statement      go to state 13
+    string_print   go to state 14
+    declaration    go to state 15
+    assignment     go to state 16
+    output         go to state 17
+    loop           go to state 18
+    conditional    go to state 19
+    special_token  go to state 20
+    add_anon_vars  go to state 21
 
 
 state 1
 
-   20 output: tok_plus_print . term
-   21       | tok_plus_print . tok_string_literal
-   22       | tok_plus_print . tok_multiply
+    3 program: error . "end of file"
 
-    tok_multiply        shift, and go to state 16
-    tok_identifier      shift, and go to state 17
-    tok_int_literal     shift, and go to state 18
-    tok_float_literal   shift, and go to state 19
-    tok_string_literal  shift, and go to state 20
-
-    term  go to state 21
+    "end of file"  shift, and go to state 22
 
 
 state 2
 
-   19 assignment: tok_multiply . tok_increment
+   13 string_print: tok_plus_print . tok_string_literal
+   26 output: tok_plus_print . term
 
-    tok_increment  shift, and go to state 22
+    tok_multiply        shift, and go to state 23
+    tok_identifier      shift, and go to state 24
+    tok_int_literal     shift, and go to state 25
+    tok_float_literal   shift, and go to state 26
+    tok_string_literal  shift, and go to state 27
+
+    term  go to state 28
 
 
 state 3
 
-    8 declaration: tok_var . tok_string tok_multiply
-    9            | tok_var . tok_integer tok_multiply
-   10            | tok_var . tok_float tok_multiply
-   11            | tok_var . tok_boolean tok_multiply
-   12            | tok_var . tok_integer tok_multiply tok_int_literal
-   13            | tok_var . tok_integer tok_multiply tok_plus_print tok_multiply tok_multiply
-   14            | tok_var . tok_integer tok_multiply expression
-   15            | tok_var . tok_float tok_multiply tok_float_literal
-   16            | tok_var . tok_float tok_multiply expression
+   25 assignment: tok_multiply . tok_increment
 
-    tok_integer  shift, and go to state 23
-    tok_float    shift, and go to state 24
-    tok_boolean  shift, and go to state 25
-    tok_string   shift, and go to state 26
+    tok_increment  shift, and go to state 29
 
 
 state 4
 
-   23 loop: tok_for_start . tok_in tok_range tok_int_literal tok_loop_start program tok_loop_end
+   14 declaration: tok_var . tok_string tok_multiply
+   15            | tok_var . tok_integer tok_multiply
+   16            | tok_var . tok_float tok_multiply
+   17            | tok_var . tok_boolean tok_multiply
+   18            | tok_var . tok_integer tok_multiply tok_int_literal
+   19            | tok_var . tok_integer tok_multiply expression
+   20            | tok_var . tok_float tok_multiply tok_float_literal
+   21            | tok_var . tok_float tok_multiply expression
+   49 add_anon_vars: tok_var . tok_integer tok_multiply tok_plus_print tok_multiply tok_multiply
 
-    tok_in  shift, and go to state 27
+    tok_integer  shift, and go to state 30
+    tok_float    shift, and go to state 31
+    tok_boolean  shift, and go to state 32
+    tok_string   shift, and go to state 33
 
 
 state 5
 
-   24 conditional: tok_if . condition tok_loop_start program tok_if_end
-   25            | tok_if . condition tok_loop_start program tok_else tok_loop_start program tok_if_end
-   26            | tok_if . compare_anon_vars tok_loop_start program tok_if_end
-   27            | tok_if . compare_anon_const tok_loop_start program tok_if_end
-   28            | tok_if . compare_anon_const tok_loop_start program tok_else tok_loop_start program tok_if_end
-   44 special_token: tok_if .
+   27 loop: tok_for_start . tok_in tok_range tok_int_literal tok_loop_start program tok_loop_end
 
-    tok_multiply       shift, and go to state 28
-    tok_identifier     shift, and go to state 17
-    tok_int_literal    shift, and go to state 18
-    tok_float_literal  shift, and go to state 19
-
-    tok_multiply    [reduce using rule 44 (special_token)]
-    tok_identifier  [reduce using rule 44 (special_token)]
-    $default        reduce using rule 44 (special_token)
-
-    compare_anon_vars   go to state 29
-    compare_anon_const  go to state 30
-    condition           go to state 31
-    term                go to state 32
-    expression          go to state 33
+    tok_in  shift, and go to state 34
 
 
 state 6
 
-   43 special_token: tok_if_end .
+   28 conditional: tok_if . condition tok_loop_start program tok_if_end
+   29            | tok_if . condition tok_loop_start program tok_else program tok_if_end
+   30            | tok_if . condition tok_loop_start program tok_loop_start program tok_if_end
+   31            | tok_if . tok_multiply tok_equal tok_int_literal tok_loop_start program tok_if_end tok_else tok_loop_start program tok_if_end
+   32            | tok_if . tok_multiply tok_greater_than tok_multiply tok_loop_start program tok_if_end
+   33            | tok_if . tok_multiply tok_equal tok_int_literal tok_loop_start program tok_if_end
+   48 special_token: tok_if .
 
-    $default  reduce using rule 43 (special_token)
+    tok_multiply       shift, and go to state 35
+    tok_identifier     shift, and go to state 24
+    tok_int_literal    shift, and go to state 25
+    tok_float_literal  shift, and go to state 26
+
+    tok_multiply    [reduce using rule 48 (special_token)]
+    tok_identifier  [reduce using rule 48 (special_token)]
+    $default        reduce using rule 48 (special_token)
+
+    condition   go to state 36
+    term        go to state 37
+    expression  go to state 38
 
 
 state 7
 
-   18 assignment: tok_identifier . tok_multiply expression
+   47 special_token: tok_else .
 
-    tok_multiply  shift, and go to state 34
+    $default  reduce using rule 47 (special_token)
 
 
 state 8
 
-    0 $accept: program . $end
+   46 special_token: tok_if_end .
 
-    $end  shift, and go to state 35
+    $default  reduce using rule 46 (special_token)
 
 
 state 9
 
-    2 program: statement . program
-
-    tok_plus_print  shift, and go to state 1
-    tok_multiply    shift, and go to state 2
-    tok_var         shift, and go to state 3
-    tok_for_start   shift, and go to state 4
-    tok_if          shift, and go to state 5
-    tok_if_end      shift, and go to state 6
-    tok_identifier  shift, and go to state 7
-
-    tok_if_end  [reduce using rule 1 (program)]
-    $default    reduce using rule 1 (program)
-
-    program        go to state 36
-    statement      go to state 9
-    declaration    go to state 10
-    assignment     go to state 11
-    output         go to state 12
-    loop           go to state 13
-    conditional    go to state 14
-    special_token  go to state 15
-
-
-state 10
-
-    3 statement: declaration .
-
-    $default  reduce using rule 3 (statement)
-
-
-state 11
-
-   17 declaration: assignment .
-
-    $default  reduce using rule 17 (declaration)
-
-
-state 12
-
-    4 statement: output .
-
-    $default  reduce using rule 4 (statement)
-
-
-state 13
-
-    5 statement: loop .
+    5 statement: tok_print_anon .
 
     $default  reduce using rule 5 (statement)
 
 
+state 10
+
+    4 statement: tok_add_anon_vars .
+
+    $default  reduce using rule 4 (statement)
+
+
+state 11
+
+   23 assignment: tok_identifier . tok_multiply expression
+   24           | tok_identifier . tok_multiply tok_identifier tok_plus_print expression
+
+    tok_multiply  shift, and go to state 39
+
+
+state 12
+
+    0 $accept: program . "end of file"
+
+    "end of file"  shift, and go to state 40
+
+
+state 13
+
+    2 program: statement . program
+
+    error              shift, and go to state 1
+    tok_plus_print     shift, and go to state 2
+    tok_multiply       shift, and go to state 3
+    tok_var            shift, and go to state 4
+    tok_for_start      shift, and go to state 5
+    tok_if             shift, and go to state 6
+    tok_else           shift, and go to state 7
+    tok_if_end         shift, and go to state 8
+    tok_print_anon     shift, and go to state 9
+    tok_add_anon_vars  shift, and go to state 10
+    tok_identifier     shift, and go to state 11
+
+    "end of file"   reduce using rule 1 (program)
+    tok_loop_start  reduce using rule 1 (program)
+    tok_loop_end    reduce using rule 1 (program)
+    tok_else        [reduce using rule 1 (program)]
+    tok_if_end      [reduce using rule 1 (program)]
+
+    program        go to state 41
+    statement      go to state 13
+    string_print   go to state 14
+    declaration    go to state 15
+    assignment     go to state 16
+    output         go to state 17
+    loop           go to state 18
+    conditional    go to state 19
+    special_token  go to state 20
+    add_anon_vars  go to state 21
+
+
 state 14
 
-    6 statement: conditional .
+   12 statement: string_print .
 
-    $default  reduce using rule 6 (statement)
+    $default  reduce using rule 12 (statement)
 
 
 state 15
 
-    7 statement: special_token .
+    7 statement: declaration .
 
     $default  reduce using rule 7 (statement)
 
 
 state 16
 
-   22 output: tok_plus_print tok_multiply .
-   37 term: tok_multiply .
+   22 declaration: assignment .
 
-    $end            reduce using rule 22 (output)
-    $end            [reduce using rule 37 (term)]
-    tok_plus_print  reduce using rule 22 (output)
-    tok_plus_print  [reduce using rule 37 (term)]
-    tok_multiply    reduce using rule 22 (output)
-    tok_multiply    [reduce using rule 37 (term)]
-    tok_var         reduce using rule 22 (output)
-    tok_var         [reduce using rule 37 (term)]
-    tok_for_start   reduce using rule 22 (output)
-    tok_for_start   [reduce using rule 37 (term)]
-    tok_loop_end    reduce using rule 22 (output)
-    tok_loop_end    [reduce using rule 37 (term)]
-    tok_if          reduce using rule 22 (output)
-    tok_if          [reduce using rule 37 (term)]
-    tok_else        reduce using rule 22 (output)
-    tok_else        [reduce using rule 37 (term)]
-    tok_if_end      reduce using rule 22 (output)
-    tok_if_end      [reduce using rule 37 (term)]
-    tok_identifier  reduce using rule 22 (output)
-    tok_identifier  [reduce using rule 37 (term)]
-    $default        reduce using rule 22 (output)
+    $default  reduce using rule 22 (declaration)
 
 
 state 17
 
-   34 term: tok_identifier .
+    8 statement: output .
 
-    $default  reduce using rule 34 (term)
+    $default  reduce using rule 8 (statement)
 
 
 state 18
 
-   35 term: tok_int_literal .
+    9 statement: loop .
 
-    $default  reduce using rule 35 (term)
+    $default  reduce using rule 9 (statement)
 
 
 state 19
 
-   36 term: tok_float_literal .
+   10 statement: conditional .
 
-    $default  reduce using rule 36 (term)
+    $default  reduce using rule 10 (statement)
 
 
 state 20
 
-   21 output: tok_plus_print tok_string_literal .
+   11 statement: special_token .
 
-    $default  reduce using rule 21 (output)
+    $default  reduce using rule 11 (statement)
 
 
 state 21
 
-   20 output: tok_plus_print term .
+    6 statement: add_anon_vars .
 
-    $default  reduce using rule 20 (output)
+    $default  reduce using rule 6 (statement)
 
 
 state 22
 
-   19 assignment: tok_multiply tok_increment .
+    3 program: error "end of file" .
 
-    $default  reduce using rule 19 (assignment)
+    $default  reduce using rule 3 (program)
 
 
 state 23
 
-    9 declaration: tok_var tok_integer . tok_multiply
-   12            | tok_var tok_integer . tok_multiply tok_int_literal
-   13            | tok_var tok_integer . tok_multiply tok_plus_print tok_multiply tok_multiply
-   14            | tok_var tok_integer . tok_multiply expression
+   40 term: tok_multiply .
 
-    tok_multiply  shift, and go to state 37
+    $default  reduce using rule 40 (term)
 
 
 state 24
 
-   10 declaration: tok_var tok_float . tok_multiply
-   15            | tok_var tok_float . tok_multiply tok_float_literal
-   16            | tok_var tok_float . tok_multiply expression
-
-    tok_multiply  shift, and go to state 38
-
-
-state 25
-
-   11 declaration: tok_var tok_boolean . tok_multiply
-
-    tok_multiply  shift, and go to state 39
-
-
-state 26
-
-    8 declaration: tok_var tok_string . tok_multiply
-
-    tok_multiply  shift, and go to state 40
-
-
-state 27
-
-   23 loop: tok_for_start tok_in . tok_range tok_int_literal tok_loop_start program tok_loop_end
-
-    tok_range  shift, and go to state 41
-
-
-state 28
-
-   29 compare_anon_vars: tok_multiply . tok_greater_than tok_multiply
-   30 compare_anon_const: tok_multiply . tok_equal tok_int_literal
-   37 term: tok_multiply .
-
-    tok_equal         shift, and go to state 42
-    tok_greater_than  shift, and go to state 43
+   37 term: tok_identifier .
 
     $default  reduce using rule 37 (term)
 
 
+state 25
+
+   38 term: tok_int_literal .
+
+    $default  reduce using rule 38 (term)
+
+
+state 26
+
+   39 term: tok_float_literal .
+
+    $default  reduce using rule 39 (term)
+
+
+state 27
+
+   13 string_print: tok_plus_print tok_string_literal .
+
+    $default  reduce using rule 13 (string_print)
+
+
+state 28
+
+   26 output: tok_plus_print term .
+
+    $default  reduce using rule 26 (output)
+
+
 state 29
 
-   26 conditional: tok_if compare_anon_vars . tok_loop_start program tok_if_end
+   25 assignment: tok_multiply tok_increment .
 
-    tok_loop_start  shift, and go to state 44
+    $default  reduce using rule 25 (assignment)
 
 
 state 30
 
-   27 conditional: tok_if compare_anon_const . tok_loop_start program tok_if_end
-   28            | tok_if compare_anon_const . tok_loop_start program tok_else tok_loop_start program tok_if_end
+   15 declaration: tok_var tok_integer . tok_multiply
+   18            | tok_var tok_integer . tok_multiply tok_int_literal
+   19            | tok_var tok_integer . tok_multiply expression
+   49 add_anon_vars: tok_var tok_integer . tok_multiply tok_plus_print tok_multiply tok_multiply
 
-    tok_loop_start  shift, and go to state 45
+    tok_multiply  shift, and go to state 42
 
 
 state 31
 
-   24 conditional: tok_if condition . tok_loop_start program tok_if_end
-   25            | tok_if condition . tok_loop_start program tok_else tok_loop_start program tok_if_end
+   16 declaration: tok_var tok_float . tok_multiply
+   20            | tok_var tok_float . tok_multiply tok_float_literal
+   21            | tok_var tok_float . tok_multiply expression
 
-    tok_loop_start  shift, and go to state 46
+    tok_multiply  shift, and go to state 43
 
 
 state 32
 
-   38 expression: term .
+   17 declaration: tok_var tok_boolean . tok_multiply
 
-    $default  reduce using rule 38 (expression)
+    tok_multiply  shift, and go to state 44
 
 
 state 33
 
-   31 condition: expression . tok_equal expression
-   32          | expression . tok_less_than expression
-   33          | expression . tok_greater_than expression
-   39 expression: expression . tok_plus_print expression
-   40           | expression . tok_minus expression
-   41           | expression . tok_multiply expression
-   42           | expression . tok_divide expression
+   14 declaration: tok_var tok_string . tok_multiply
 
-    tok_plus_print    shift, and go to state 47
-    tok_minus         shift, and go to state 48
-    tok_multiply      shift, and go to state 49
-    tok_divide        shift, and go to state 50
-    tok_equal         shift, and go to state 51
-    tok_less_than     shift, and go to state 52
-    tok_greater_than  shift, and go to state 53
+    tok_multiply  shift, and go to state 45
 
 
 state 34
 
-   18 assignment: tok_identifier tok_multiply . expression
+   27 loop: tok_for_start tok_in . tok_range tok_int_literal tok_loop_start program tok_loop_end
 
-    tok_multiply       shift, and go to state 54
-    tok_identifier     shift, and go to state 17
-    tok_int_literal    shift, and go to state 18
-    tok_float_literal  shift, and go to state 19
-
-    term        go to state 32
-    expression  go to state 55
+    tok_range  shift, and go to state 46
 
 
 state 35
 
-    0 $accept: program $end .
+   31 conditional: tok_if tok_multiply . tok_equal tok_int_literal tok_loop_start program tok_if_end tok_else tok_loop_start program tok_if_end
+   32            | tok_if tok_multiply . tok_greater_than tok_multiply tok_loop_start program tok_if_end
+   33            | tok_if tok_multiply . tok_equal tok_int_literal tok_loop_start program tok_if_end
+   40 term: tok_multiply .
+
+    tok_equal         shift, and go to state 47
+    tok_greater_than  shift, and go to state 48
+
+    $default  reduce using rule 40 (term)
+
+
+state 36
+
+   28 conditional: tok_if condition . tok_loop_start program tok_if_end
+   29            | tok_if condition . tok_loop_start program tok_else program tok_if_end
+   30            | tok_if condition . tok_loop_start program tok_loop_start program tok_if_end
+
+    tok_loop_start  shift, and go to state 49
+
+
+state 37
+
+   41 expression: term .
+
+    $default  reduce using rule 41 (expression)
+
+
+state 38
+
+   34 condition: expression . tok_equal expression
+   35          | expression . tok_less_than expression
+   36          | expression . tok_greater_than expression
+   42 expression: expression . tok_plus_print expression
+   43           | expression . tok_minus expression
+   44           | expression . tok_multiply expression
+   45           | expression . tok_divide expression
+
+    tok_plus_print    shift, and go to state 50
+    tok_minus         shift, and go to state 51
+    tok_multiply      shift, and go to state 52
+    tok_divide        shift, and go to state 53
+    tok_equal         shift, and go to state 54
+    tok_less_than     shift, and go to state 55
+    tok_greater_than  shift, and go to state 56
+
+
+state 39
+
+   23 assignment: tok_identifier tok_multiply . expression
+   24           | tok_identifier tok_multiply . tok_identifier tok_plus_print expression
+
+    tok_multiply       shift, and go to state 23
+    tok_identifier     shift, and go to state 57
+    tok_int_literal    shift, and go to state 25
+    tok_float_literal  shift, and go to state 26
+
+    term        go to state 37
+    expression  go to state 58
+
+
+state 40
+
+    0 $accept: program "end of file" .
 
     $default  accept
 
 
-state 36
+state 41
 
     2 program: statement program .
 
     $default  reduce using rule 2 (program)
 
 
-state 37
-
-    9 declaration: tok_var tok_integer tok_multiply .
-   12            | tok_var tok_integer tok_multiply . tok_int_literal
-   13            | tok_var tok_integer tok_multiply . tok_plus_print tok_multiply tok_multiply
-   14            | tok_var tok_integer tok_multiply . expression
-
-    tok_identifier     shift, and go to state 17
-    tok_int_literal    shift, and go to state 57
-    tok_float_literal  shift, and go to state 19
-
-    tok_identifier  [reduce using rule 9 (declaration)]
-    $default        reduce using rule 9 (declaration)
-
-    term        go to state 32
-    expression  go to state 58
-
-
-state 38
-
-   10 declaration: tok_var tok_float tok_multiply .
-   15            | tok_var tok_float tok_multiply . tok_float_literal
-   16            | tok_var tok_float tok_multiply . expression
-
-    tok_identifier     shift, and go to state 17
-    tok_int_literal    shift, and go to state 18
-    tok_float_literal  shift, and go to state 59
-
-    tok_identifier  [reduce using rule 10 (declaration)]
-    $default        reduce using rule 10 (declaration)
-
-    term        go to state 32
-    expression  go to state 60
-
-
-state 39
-
-   11 declaration: tok_var tok_boolean tok_multiply .
-
-    $default  reduce using rule 11 (declaration)
-
-
-state 40
-
-    8 declaration: tok_var tok_string tok_multiply .
-
-    $default  reduce using rule 8 (declaration)
-
-
-state 41
-
-   23 loop: tok_for_start tok_in tok_range . tok_int_literal tok_loop_start program tok_loop_end
-
-    tok_int_literal  shift, and go to state 61
-
-
 state 42
 
-   30 compare_anon_const: tok_multiply tok_equal . tok_int_literal
+   15 declaration: tok_var tok_integer tok_multiply .
+   18            | tok_var tok_integer tok_multiply . tok_int_literal
+   19            | tok_var tok_integer tok_multiply . expression
+   49 add_anon_vars: tok_var tok_integer tok_multiply . tok_plus_print tok_multiply tok_multiply
 
-    tok_int_literal  shift, and go to state 62
+    tok_identifier     shift, and go to state 24
+    tok_int_literal    shift, and go to state 60
+    tok_float_literal  shift, and go to state 26
+
+    tok_identifier  [reduce using rule 15 (declaration)]
+    $default        reduce using rule 15 (declaration)
+
+    term        go to state 37
+    expression  go to state 61
 
 
 state 43
 
-   29 compare_anon_vars: tok_multiply tok_greater_than . tok_multiply
+   16 declaration: tok_var tok_float tok_multiply .
+   20            | tok_var tok_float tok_multiply . tok_float_literal
+   21            | tok_var tok_float tok_multiply . expression
 
-    tok_multiply  shift, and go to state 63
+    tok_identifier     shift, and go to state 24
+    tok_int_literal    shift, and go to state 25
+    tok_float_literal  shift, and go to state 62
+
+    tok_identifier  [reduce using rule 16 (declaration)]
+    $default        reduce using rule 16 (declaration)
+
+    term        go to state 37
+    expression  go to state 63
 
 
 state 44
 
-   26 conditional: tok_if compare_anon_vars tok_loop_start . program tok_if_end
+   17 declaration: tok_var tok_boolean tok_multiply .
 
-    tok_plus_print  shift, and go to state 1
-    tok_multiply    shift, and go to state 2
-    tok_var         shift, and go to state 3
-    tok_for_start   shift, and go to state 4
-    tok_if          shift, and go to state 5
-    tok_if_end      shift, and go to state 6
-    tok_identifier  shift, and go to state 7
-
-    tok_if_end  [reduce using rule 1 (program)]
-
-    program        go to state 64
-    statement      go to state 9
-    declaration    go to state 10
-    assignment     go to state 11
-    output         go to state 12
-    loop           go to state 13
-    conditional    go to state 14
-    special_token  go to state 15
+    $default  reduce using rule 17 (declaration)
 
 
 state 45
 
-   27 conditional: tok_if compare_anon_const tok_loop_start . program tok_if_end
-   28            | tok_if compare_anon_const tok_loop_start . program tok_else tok_loop_start program tok_if_end
-
-    tok_plus_print  shift, and go to state 1
-    tok_multiply    shift, and go to state 2
-    tok_var         shift, and go to state 3
-    tok_for_start   shift, and go to state 4
-    tok_if          shift, and go to state 5
-    tok_if_end      shift, and go to state 6
-    tok_identifier  shift, and go to state 7
-
-    tok_if_end  [reduce using rule 1 (program)]
-    $default    reduce using rule 1 (program)
-
-    program        go to state 65
-    statement      go to state 9
-    declaration    go to state 10
-    assignment     go to state 11
-    output         go to state 12
-    loop           go to state 13
-    conditional    go to state 14
-    special_token  go to state 15
-
-
-state 46
-
-   24 conditional: tok_if condition tok_loop_start . program tok_if_end
-   25            | tok_if condition tok_loop_start . program tok_else tok_loop_start program tok_if_end
-
-    tok_plus_print  shift, and go to state 1
-    tok_multiply    shift, and go to state 2
-    tok_var         shift, and go to state 3
-    tok_for_start   shift, and go to state 4
-    tok_if          shift, and go to state 5
-    tok_if_end      shift, and go to state 6
-    tok_identifier  shift, and go to state 7
-
-    tok_if_end  [reduce using rule 1 (program)]
-    $default    reduce using rule 1 (program)
-
-    program        go to state 66
-    statement      go to state 9
-    declaration    go to state 10
-    assignment     go to state 11
-    output         go to state 12
-    loop           go to state 13
-    conditional    go to state 14
-    special_token  go to state 15
-
-
-state 47
-
-   39 expression: expression tok_plus_print . expression
-
-    tok_multiply       shift, and go to state 54
-    tok_identifier     shift, and go to state 17
-    tok_int_literal    shift, and go to state 18
-    tok_float_literal  shift, and go to state 19
-
-    term        go to state 32
-    expression  go to state 67
-
-
-state 48
-
-   40 expression: expression tok_minus . expression
-
-    tok_multiply       shift, and go to state 54
-    tok_identifier     shift, and go to state 17
-    tok_int_literal    shift, and go to state 18
-    tok_float_literal  shift, and go to state 19
-
-    term        go to state 32
-    expression  go to state 68
-
-
-state 49
-
-   41 expression: expression tok_multiply . expression
-
-    tok_multiply       shift, and go to state 54
-    tok_identifier     shift, and go to state 17
-    tok_int_literal    shift, and go to state 18
-    tok_float_literal  shift, and go to state 19
-
-    term        go to state 32
-    expression  go to state 69
-
-
-state 50
-
-   42 expression: expression tok_divide . expression
-
-    tok_multiply       shift, and go to state 54
-    tok_identifier     shift, and go to state 17
-    tok_int_literal    shift, and go to state 18
-    tok_float_literal  shift, and go to state 19
-
-    term        go to state 32
-    expression  go to state 70
-
-
-state 51
-
-   31 condition: expression tok_equal . expression
-
-    tok_multiply       shift, and go to state 54
-    tok_identifier     shift, and go to state 17
-    tok_int_literal    shift, and go to state 18
-    tok_float_literal  shift, and go to state 19
-
-    term        go to state 32
-    expression  go to state 71
-
-
-state 52
-
-   32 condition: expression tok_less_than . expression
-
-    tok_multiply       shift, and go to state 54
-    tok_identifier     shift, and go to state 17
-    tok_int_literal    shift, and go to state 18
-    tok_float_literal  shift, and go to state 19
-
-    term        go to state 32
-    expression  go to state 72
-
-
-state 53
-
-   33 condition: expression tok_greater_than . expression
-
-    tok_multiply       shift, and go to state 54
-    tok_identifier     shift, and go to state 17
-    tok_int_literal    shift, and go to state 18
-    tok_float_literal  shift, and go to state 19
-
-    term        go to state 32
-    expression  go to state 73
-
-
-state 54
-
-   37 term: tok_multiply .
-
-    $default  reduce using rule 37 (term)
-
-
-state 55
-
-   18 assignment: tok_identifier tok_multiply expression .
-   39 expression: expression . tok_plus_print expression
-   40           | expression . tok_minus expression
-   41           | expression . tok_multiply expression
-   42           | expression . tok_divide expression
-
-    tok_minus   shift, and go to state 48
-    tok_divide  shift, and go to state 50
-
-    $default  reduce using rule 18 (assignment)
-
-
-state 56
-
-   13 declaration: tok_var tok_integer tok_multiply tok_plus_print . tok_multiply tok_multiply
-
-    tok_multiply  shift, and go to state 74
-
-
-state 57
-
-   12 declaration: tok_var tok_integer tok_multiply tok_int_literal .
-   35 term: tok_int_literal .
-
-    $end            reduce using rule 12 (declaration)
-    $end            [reduce using rule 35 (term)]
-    tok_plus_print  reduce using rule 12 (declaration)
-    tok_plus_print  [reduce using rule 35 (term)]
-    tok_minus       reduce using rule 35 (term)
-    tok_multiply    reduce using rule 12 (declaration)
-    tok_multiply    [reduce using rule 35 (term)]
-    tok_divide      reduce using rule 35 (term)
-    tok_var         reduce using rule 12 (declaration)
-    tok_var         [reduce using rule 35 (term)]
-    tok_for_start   reduce using rule 12 (declaration)
-    tok_for_start   [reduce using rule 35 (term)]
-    tok_loop_end    reduce using rule 12 (declaration)
-    tok_loop_end    [reduce using rule 35 (term)]
-    tok_if          reduce using rule 12 (declaration)
-    tok_if          [reduce using rule 35 (term)]
-    tok_else        reduce using rule 12 (declaration)
-    tok_else        [reduce using rule 35 (term)]
-    tok_if_end      reduce using rule 12 (declaration)
-    tok_if_end      [reduce using rule 35 (term)]
-    tok_identifier  reduce using rule 12 (declaration)
-    tok_identifier  [reduce using rule 35 (term)]
-    $default        reduce using rule 12 (declaration)
-
-
-state 58
-
-   14 declaration: tok_var tok_integer tok_multiply expression .
-   39 expression: expression . tok_plus_print expression
-   40           | expression . tok_minus expression
-   41           | expression . tok_multiply expression
-   42           | expression . tok_divide expression
-
-    tok_minus   shift, and go to state 48
-    tok_divide  shift, and go to state 50
+   14 declaration: tok_var tok_string tok_multiply .
 
     $default  reduce using rule 14 (declaration)
 
 
+state 46
+
+   27 loop: tok_for_start tok_in tok_range . tok_int_literal tok_loop_start program tok_loop_end
+
+    tok_int_literal  shift, and go to state 64
+
+
+state 47
+
+   31 conditional: tok_if tok_multiply tok_equal . tok_int_literal tok_loop_start program tok_if_end tok_else tok_loop_start program tok_if_end
+   33            | tok_if tok_multiply tok_equal . tok_int_literal tok_loop_start program tok_if_end
+
+    tok_int_literal  shift, and go to state 65
+
+
+state 48
+
+   32 conditional: tok_if tok_multiply tok_greater_than . tok_multiply tok_loop_start program tok_if_end
+
+    tok_multiply  shift, and go to state 66
+
+
+state 49
+
+   28 conditional: tok_if condition tok_loop_start . program tok_if_end
+   29            | tok_if condition tok_loop_start . program tok_else program tok_if_end
+   30            | tok_if condition tok_loop_start . program tok_loop_start program tok_if_end
+
+    error              shift, and go to state 1
+    tok_plus_print     shift, and go to state 2
+    tok_multiply       shift, and go to state 3
+    tok_var            shift, and go to state 4
+    tok_for_start      shift, and go to state 5
+    tok_if             shift, and go to state 6
+    tok_else           shift, and go to state 7
+    tok_if_end         shift, and go to state 8
+    tok_print_anon     shift, and go to state 9
+    tok_add_anon_vars  shift, and go to state 10
+    tok_identifier     shift, and go to state 11
+
+    tok_loop_start  reduce using rule 1 (program)
+    tok_else        [reduce using rule 1 (program)]
+    tok_if_end      [reduce using rule 1 (program)]
+
+    program        go to state 67
+    statement      go to state 13
+    string_print   go to state 14
+    declaration    go to state 15
+    assignment     go to state 16
+    output         go to state 17
+    loop           go to state 18
+    conditional    go to state 19
+    special_token  go to state 20
+    add_anon_vars  go to state 21
+
+
+state 50
+
+   42 expression: expression tok_plus_print . expression
+
+    tok_multiply       shift, and go to state 23
+    tok_identifier     shift, and go to state 24
+    tok_int_literal    shift, and go to state 25
+    tok_float_literal  shift, and go to state 26
+
+    term        go to state 37
+    expression  go to state 68
+
+
+state 51
+
+   43 expression: expression tok_minus . expression
+
+    tok_multiply       shift, and go to state 23
+    tok_identifier     shift, and go to state 24
+    tok_int_literal    shift, and go to state 25
+    tok_float_literal  shift, and go to state 26
+
+    term        go to state 37
+    expression  go to state 69
+
+
+state 52
+
+   44 expression: expression tok_multiply . expression
+
+    tok_multiply       shift, and go to state 23
+    tok_identifier     shift, and go to state 24
+    tok_int_literal    shift, and go to state 25
+    tok_float_literal  shift, and go to state 26
+
+    term        go to state 37
+    expression  go to state 70
+
+
+state 53
+
+   45 expression: expression tok_divide . expression
+
+    tok_multiply       shift, and go to state 23
+    tok_identifier     shift, and go to state 24
+    tok_int_literal    shift, and go to state 25
+    tok_float_literal  shift, and go to state 26
+
+    term        go to state 37
+    expression  go to state 71
+
+
+state 54
+
+   34 condition: expression tok_equal . expression
+
+    tok_multiply       shift, and go to state 23
+    tok_identifier     shift, and go to state 24
+    tok_int_literal    shift, and go to state 25
+    tok_float_literal  shift, and go to state 26
+
+    term        go to state 37
+    expression  go to state 72
+
+
+state 55
+
+   35 condition: expression tok_less_than . expression
+
+    tok_multiply       shift, and go to state 23
+    tok_identifier     shift, and go to state 24
+    tok_int_literal    shift, and go to state 25
+    tok_float_literal  shift, and go to state 26
+
+    term        go to state 37
+    expression  go to state 73
+
+
+state 56
+
+   36 condition: expression tok_greater_than . expression
+
+    tok_multiply       shift, and go to state 23
+    tok_identifier     shift, and go to state 24
+    tok_int_literal    shift, and go to state 25
+    tok_float_literal  shift, and go to state 26
+
+    term        go to state 37
+    expression  go to state 74
+
+
+state 57
+
+   24 assignment: tok_identifier tok_multiply tok_identifier . tok_plus_print expression
+   37 term: tok_identifier .
+
+    tok_plus_print  shift, and go to state 75
+
+    tok_plus_print  [reduce using rule 37 (term)]
+    $default        reduce using rule 37 (term)
+
+
+state 58
+
+   23 assignment: tok_identifier tok_multiply expression .
+   42 expression: expression . tok_plus_print expression
+   43           | expression . tok_minus expression
+   44           | expression . tok_multiply expression
+   45           | expression . tok_divide expression
+
+    tok_minus   shift, and go to state 51
+    tok_divide  shift, and go to state 53
+
+    $default  reduce using rule 23 (assignment)
+
+
 state 59
 
-   15 declaration: tok_var tok_float tok_multiply tok_float_literal .
-   36 term: tok_float_literal .
+   49 add_anon_vars: tok_var tok_integer tok_multiply tok_plus_print . tok_multiply tok_multiply
 
-    $end            reduce using rule 15 (declaration)
-    $end            [reduce using rule 36 (term)]
-    tok_plus_print  reduce using rule 15 (declaration)
-    tok_plus_print  [reduce using rule 36 (term)]
-    tok_minus       reduce using rule 36 (term)
-    tok_multiply    reduce using rule 15 (declaration)
-    tok_multiply    [reduce using rule 36 (term)]
-    tok_divide      reduce using rule 36 (term)
-    tok_var         reduce using rule 15 (declaration)
-    tok_var         [reduce using rule 36 (term)]
-    tok_for_start   reduce using rule 15 (declaration)
-    tok_for_start   [reduce using rule 36 (term)]
-    tok_loop_end    reduce using rule 15 (declaration)
-    tok_loop_end    [reduce using rule 36 (term)]
-    tok_if          reduce using rule 15 (declaration)
-    tok_if          [reduce using rule 36 (term)]
-    tok_else        reduce using rule 15 (declaration)
-    tok_else        [reduce using rule 36 (term)]
-    tok_if_end      reduce using rule 15 (declaration)
-    tok_if_end      [reduce using rule 36 (term)]
-    tok_identifier  reduce using rule 15 (declaration)
-    tok_identifier  [reduce using rule 36 (term)]
-    $default        reduce using rule 15 (declaration)
+    tok_multiply  shift, and go to state 76
 
 
 state 60
 
-   16 declaration: tok_var tok_float tok_multiply expression .
-   39 expression: expression . tok_plus_print expression
-   40           | expression . tok_minus expression
-   41           | expression . tok_multiply expression
-   42           | expression . tok_divide expression
+   18 declaration: tok_var tok_integer tok_multiply tok_int_literal .
+   38 term: tok_int_literal .
 
-    tok_minus   shift, and go to state 48
-    tok_divide  shift, and go to state 50
-
-    $default  reduce using rule 16 (declaration)
+    "end of file"      reduce using rule 18 (declaration)
+    "end of file"      [reduce using rule 38 (term)]
+    error              reduce using rule 18 (declaration)
+    error              [reduce using rule 38 (term)]
+    tok_plus_print     reduce using rule 18 (declaration)
+    tok_plus_print     [reduce using rule 38 (term)]
+    tok_minus          reduce using rule 38 (term)
+    tok_multiply       reduce using rule 18 (declaration)
+    tok_multiply       [reduce using rule 38 (term)]
+    tok_divide         reduce using rule 38 (term)
+    tok_var            reduce using rule 18 (declaration)
+    tok_var            [reduce using rule 38 (term)]
+    tok_for_start      reduce using rule 18 (declaration)
+    tok_for_start      [reduce using rule 38 (term)]
+    tok_loop_start     reduce using rule 18 (declaration)
+    tok_loop_start     [reduce using rule 38 (term)]
+    tok_loop_end       reduce using rule 18 (declaration)
+    tok_loop_end       [reduce using rule 38 (term)]
+    tok_if             reduce using rule 18 (declaration)
+    tok_if             [reduce using rule 38 (term)]
+    tok_else           reduce using rule 18 (declaration)
+    tok_else           [reduce using rule 38 (term)]
+    tok_if_end         reduce using rule 18 (declaration)
+    tok_if_end         [reduce using rule 38 (term)]
+    tok_print_anon     reduce using rule 18 (declaration)
+    tok_print_anon     [reduce using rule 38 (term)]
+    tok_add_anon_vars  reduce using rule 18 (declaration)
+    tok_add_anon_vars  [reduce using rule 38 (term)]
+    tok_identifier     reduce using rule 18 (declaration)
+    tok_identifier     [reduce using rule 38 (term)]
+    $default           reduce using rule 18 (declaration)
 
 
 state 61
 
-   23 loop: tok_for_start tok_in tok_range tok_int_literal . tok_loop_start program tok_loop_end
+   19 declaration: tok_var tok_integer tok_multiply expression .
+   42 expression: expression . tok_plus_print expression
+   43           | expression . tok_minus expression
+   44           | expression . tok_multiply expression
+   45           | expression . tok_divide expression
 
-    tok_loop_start  shift, and go to state 75
+    tok_minus   shift, and go to state 51
+    tok_divide  shift, and go to state 53
+
+    $default  reduce using rule 19 (declaration)
 
 
 state 62
 
-   30 compare_anon_const: tok_multiply tok_equal tok_int_literal .
+   20 declaration: tok_var tok_float tok_multiply tok_float_literal .
+   39 term: tok_float_literal .
 
-    $default  reduce using rule 30 (compare_anon_const)
+    "end of file"      reduce using rule 20 (declaration)
+    "end of file"      [reduce using rule 39 (term)]
+    error              reduce using rule 20 (declaration)
+    error              [reduce using rule 39 (term)]
+    tok_plus_print     reduce using rule 20 (declaration)
+    tok_plus_print     [reduce using rule 39 (term)]
+    tok_minus          reduce using rule 39 (term)
+    tok_multiply       reduce using rule 20 (declaration)
+    tok_multiply       [reduce using rule 39 (term)]
+    tok_divide         reduce using rule 39 (term)
+    tok_var            reduce using rule 20 (declaration)
+    tok_var            [reduce using rule 39 (term)]
+    tok_for_start      reduce using rule 20 (declaration)
+    tok_for_start      [reduce using rule 39 (term)]
+    tok_loop_start     reduce using rule 20 (declaration)
+    tok_loop_start     [reduce using rule 39 (term)]
+    tok_loop_end       reduce using rule 20 (declaration)
+    tok_loop_end       [reduce using rule 39 (term)]
+    tok_if             reduce using rule 20 (declaration)
+    tok_if             [reduce using rule 39 (term)]
+    tok_else           reduce using rule 20 (declaration)
+    tok_else           [reduce using rule 39 (term)]
+    tok_if_end         reduce using rule 20 (declaration)
+    tok_if_end         [reduce using rule 39 (term)]
+    tok_print_anon     reduce using rule 20 (declaration)
+    tok_print_anon     [reduce using rule 39 (term)]
+    tok_add_anon_vars  reduce using rule 20 (declaration)
+    tok_add_anon_vars  [reduce using rule 39 (term)]
+    tok_identifier     reduce using rule 20 (declaration)
+    tok_identifier     [reduce using rule 39 (term)]
+    $default           reduce using rule 20 (declaration)
 
 
 state 63
 
-   29 compare_anon_vars: tok_multiply tok_greater_than tok_multiply .
+   21 declaration: tok_var tok_float tok_multiply expression .
+   42 expression: expression . tok_plus_print expression
+   43           | expression . tok_minus expression
+   44           | expression . tok_multiply expression
+   45           | expression . tok_divide expression
 
-    $default  reduce using rule 29 (compare_anon_vars)
+    tok_minus   shift, and go to state 51
+    tok_divide  shift, and go to state 53
+
+    $default  reduce using rule 21 (declaration)
 
 
 state 64
 
-   26 conditional: tok_if compare_anon_vars tok_loop_start program . tok_if_end
+   27 loop: tok_for_start tok_in tok_range tok_int_literal . tok_loop_start program tok_loop_end
 
-    tok_if_end  shift, and go to state 76
+    tok_loop_start  shift, and go to state 77
 
 
 state 65
 
-   27 conditional: tok_if compare_anon_const tok_loop_start program . tok_if_end
-   28            | tok_if compare_anon_const tok_loop_start program . tok_else tok_loop_start program tok_if_end
+   31 conditional: tok_if tok_multiply tok_equal tok_int_literal . tok_loop_start program tok_if_end tok_else tok_loop_start program tok_if_end
+   33            | tok_if tok_multiply tok_equal tok_int_literal . tok_loop_start program tok_if_end
 
-    tok_else    shift, and go to state 77
-    tok_if_end  shift, and go to state 78
+    tok_loop_start  shift, and go to state 78
 
 
 state 66
 
-   24 conditional: tok_if condition tok_loop_start program . tok_if_end
-   25            | tok_if condition tok_loop_start program . tok_else tok_loop_start program tok_if_end
+   32 conditional: tok_if tok_multiply tok_greater_than tok_multiply . tok_loop_start program tok_if_end
 
-    tok_else    shift, and go to state 79
-    tok_if_end  shift, and go to state 80
+    tok_loop_start  shift, and go to state 79
 
 
 state 67
 
-   39 expression: expression . tok_plus_print expression
-   39           | expression tok_plus_print expression .
-   40           | expression . tok_minus expression
-   41           | expression . tok_multiply expression
-   42           | expression . tok_divide expression
+   28 conditional: tok_if condition tok_loop_start program . tok_if_end
+   29            | tok_if condition tok_loop_start program . tok_else program tok_if_end
+   30            | tok_if condition tok_loop_start program . tok_loop_start program tok_if_end
 
-    tok_multiply  shift, and go to state 49
-    tok_divide    shift, and go to state 50
-
-    $default  reduce using rule 39 (expression)
+    tok_loop_start  shift, and go to state 80
+    tok_else        shift, and go to state 81
+    tok_if_end      shift, and go to state 82
 
 
 state 68
 
-   39 expression: expression . tok_plus_print expression
-   40           | expression . tok_minus expression
-   40           | expression tok_minus expression .
-   41           | expression . tok_multiply expression
-   42           | expression . tok_divide expression
+   42 expression: expression . tok_plus_print expression
+   42           | expression tok_plus_print expression .
+   43           | expression . tok_minus expression
+   44           | expression . tok_multiply expression
+   45           | expression . tok_divide expression
 
-    tok_multiply  shift, and go to state 49
-    tok_divide    shift, and go to state 50
-
-    $default  reduce using rule 40 (expression)
-
-
-state 69
-
-   39 expression: expression . tok_plus_print expression
-   40           | expression . tok_minus expression
-   41           | expression . tok_multiply expression
-   41           | expression tok_multiply expression .
-   42           | expression . tok_divide expression
-
-    $default  reduce using rule 41 (expression)
-
-
-state 70
-
-   39 expression: expression . tok_plus_print expression
-   40           | expression . tok_minus expression
-   41           | expression . tok_multiply expression
-   42           | expression . tok_divide expression
-   42           | expression tok_divide expression .
+    tok_multiply  shift, and go to state 52
+    tok_divide    shift, and go to state 53
 
     $default  reduce using rule 42 (expression)
 
 
+state 69
+
+   42 expression: expression . tok_plus_print expression
+   43           | expression . tok_minus expression
+   43           | expression tok_minus expression .
+   44           | expression . tok_multiply expression
+   45           | expression . tok_divide expression
+
+    tok_multiply  shift, and go to state 52
+    tok_divide    shift, and go to state 53
+
+    $default  reduce using rule 43 (expression)
+
+
+state 70
+
+   42 expression: expression . tok_plus_print expression
+   43           | expression . tok_minus expression
+   44           | expression . tok_multiply expression
+   44           | expression tok_multiply expression .
+   45           | expression . tok_divide expression
+
+    $default  reduce using rule 44 (expression)
+
+
 state 71
 
-   31 condition: expression tok_equal expression .
-   39 expression: expression . tok_plus_print expression
-   40           | expression . tok_minus expression
-   41           | expression . tok_multiply expression
-   42           | expression . tok_divide expression
+   42 expression: expression . tok_plus_print expression
+   43           | expression . tok_minus expression
+   44           | expression . tok_multiply expression
+   45           | expression . tok_divide expression
+   45           | expression tok_divide expression .
 
-    tok_plus_print  shift, and go to state 47
-    tok_minus       shift, and go to state 48
-    tok_multiply    shift, and go to state 49
-    tok_divide      shift, and go to state 50
-
-    $default  reduce using rule 31 (condition)
+    $default  reduce using rule 45 (expression)
 
 
 state 72
 
-   32 condition: expression tok_less_than expression .
-   39 expression: expression . tok_plus_print expression
-   40           | expression . tok_minus expression
-   41           | expression . tok_multiply expression
-   42           | expression . tok_divide expression
+   34 condition: expression tok_equal expression .
+   42 expression: expression . tok_plus_print expression
+   43           | expression . tok_minus expression
+   44           | expression . tok_multiply expression
+   45           | expression . tok_divide expression
 
-    tok_plus_print  shift, and go to state 47
-    tok_minus       shift, and go to state 48
-    tok_multiply    shift, and go to state 49
-    tok_divide      shift, and go to state 50
+    tok_plus_print  shift, and go to state 50
+    tok_minus       shift, and go to state 51
+    tok_multiply    shift, and go to state 52
+    tok_divide      shift, and go to state 53
 
-    $default  reduce using rule 32 (condition)
+    $default  reduce using rule 34 (condition)
 
 
 state 73
 
-   33 condition: expression tok_greater_than expression .
-   39 expression: expression . tok_plus_print expression
-   40           | expression . tok_minus expression
-   41           | expression . tok_multiply expression
-   42           | expression . tok_divide expression
+   35 condition: expression tok_less_than expression .
+   42 expression: expression . tok_plus_print expression
+   43           | expression . tok_minus expression
+   44           | expression . tok_multiply expression
+   45           | expression . tok_divide expression
 
-    tok_plus_print  shift, and go to state 47
-    tok_minus       shift, and go to state 48
-    tok_multiply    shift, and go to state 49
-    tok_divide      shift, and go to state 50
+    tok_plus_print  shift, and go to state 50
+    tok_minus       shift, and go to state 51
+    tok_multiply    shift, and go to state 52
+    tok_divide      shift, and go to state 53
 
-    $default  reduce using rule 33 (condition)
+    $default  reduce using rule 35 (condition)
 
 
 state 74
 
-   13 declaration: tok_var tok_integer tok_multiply tok_plus_print tok_multiply . tok_multiply
+   36 condition: expression tok_greater_than expression .
+   42 expression: expression . tok_plus_print expression
+   43           | expression . tok_minus expression
+   44           | expression . tok_multiply expression
+   45           | expression . tok_divide expression
 
-    tok_multiply  shift, and go to state 81
+    tok_plus_print  shift, and go to state 50
+    tok_minus       shift, and go to state 51
+    tok_multiply    shift, and go to state 52
+    tok_divide      shift, and go to state 53
+
+    $default  reduce using rule 36 (condition)
 
 
 state 75
 
-   23 loop: tok_for_start tok_in tok_range tok_int_literal tok_loop_start . program tok_loop_end
+   24 assignment: tok_identifier tok_multiply tok_identifier tok_plus_print . expression
 
-    tok_plus_print  shift, and go to state 1
-    tok_multiply    shift, and go to state 2
-    tok_var         shift, and go to state 3
-    tok_for_start   shift, and go to state 4
-    tok_if          shift, and go to state 5
-    tok_if_end      shift, and go to state 6
-    tok_identifier  shift, and go to state 7
+    tok_multiply       shift, and go to state 23
+    tok_identifier     shift, and go to state 24
+    tok_int_literal    shift, and go to state 25
+    tok_float_literal  shift, and go to state 26
 
-    $default  reduce using rule 1 (program)
-
-    program        go to state 82
-    statement      go to state 9
-    declaration    go to state 10
-    assignment     go to state 11
-    output         go to state 12
-    loop           go to state 13
-    conditional    go to state 14
-    special_token  go to state 15
+    term        go to state 37
+    expression  go to state 83
 
 
 state 76
 
-   26 conditional: tok_if compare_anon_vars tok_loop_start program tok_if_end .
+   49 add_anon_vars: tok_var tok_integer tok_multiply tok_plus_print tok_multiply . tok_multiply
 
-    $default  reduce using rule 26 (conditional)
+    tok_multiply  shift, and go to state 84
 
 
 state 77
 
-   28 conditional: tok_if compare_anon_const tok_loop_start program tok_else . tok_loop_start program tok_if_end
+   27 loop: tok_for_start tok_in tok_range tok_int_literal tok_loop_start . program tok_loop_end
 
-    tok_loop_start  shift, and go to state 83
+    error              shift, and go to state 1
+    tok_plus_print     shift, and go to state 2
+    tok_multiply       shift, and go to state 3
+    tok_var            shift, and go to state 4
+    tok_for_start      shift, and go to state 5
+    tok_if             shift, and go to state 6
+    tok_else           shift, and go to state 7
+    tok_if_end         shift, and go to state 8
+    tok_print_anon     shift, and go to state 9
+    tok_add_anon_vars  shift, and go to state 10
+    tok_identifier     shift, and go to state 11
+
+    tok_loop_end  reduce using rule 1 (program)
+
+    program        go to state 85
+    statement      go to state 13
+    string_print   go to state 14
+    declaration    go to state 15
+    assignment     go to state 16
+    output         go to state 17
+    loop           go to state 18
+    conditional    go to state 19
+    special_token  go to state 20
+    add_anon_vars  go to state 21
 
 
 state 78
 
-   27 conditional: tok_if compare_anon_const tok_loop_start program tok_if_end .
+   31 conditional: tok_if tok_multiply tok_equal tok_int_literal tok_loop_start . program tok_if_end tok_else tok_loop_start program tok_if_end
+   33            | tok_if tok_multiply tok_equal tok_int_literal tok_loop_start . program tok_if_end
 
-    $default  reduce using rule 27 (conditional)
-
-
-state 79
-
-   25 conditional: tok_if condition tok_loop_start program tok_else . tok_loop_start program tok_if_end
-
-    tok_loop_start  shift, and go to state 84
-
-
-state 80
-
-   24 conditional: tok_if condition tok_loop_start program tok_if_end .
-
-    $default  reduce using rule 24 (conditional)
-
-
-state 81
-
-   13 declaration: tok_var tok_integer tok_multiply tok_plus_print tok_multiply tok_multiply .
-
-    $default  reduce using rule 13 (declaration)
-
-
-state 82
-
-   23 loop: tok_for_start tok_in tok_range tok_int_literal tok_loop_start program . tok_loop_end
-
-    tok_loop_end  shift, and go to state 85
-
-
-state 83
-
-   28 conditional: tok_if compare_anon_const tok_loop_start program tok_else tok_loop_start . program tok_if_end
-
-    tok_plus_print  shift, and go to state 1
-    tok_multiply    shift, and go to state 2
-    tok_var         shift, and go to state 3
-    tok_for_start   shift, and go to state 4
-    tok_if          shift, and go to state 5
-    tok_if_end      shift, and go to state 6
-    tok_identifier  shift, and go to state 7
+    error              shift, and go to state 1
+    tok_plus_print     shift, and go to state 2
+    tok_multiply       shift, and go to state 3
+    tok_var            shift, and go to state 4
+    tok_for_start      shift, and go to state 5
+    tok_if             shift, and go to state 6
+    tok_else           shift, and go to state 7
+    tok_if_end         shift, and go to state 8
+    tok_print_anon     shift, and go to state 9
+    tok_add_anon_vars  shift, and go to state 10
+    tok_identifier     shift, and go to state 11
 
     tok_if_end  [reduce using rule 1 (program)]
 
     program        go to state 86
-    statement      go to state 9
-    declaration    go to state 10
-    assignment     go to state 11
-    output         go to state 12
-    loop           go to state 13
-    conditional    go to state 14
-    special_token  go to state 15
+    statement      go to state 13
+    string_print   go to state 14
+    declaration    go to state 15
+    assignment     go to state 16
+    output         go to state 17
+    loop           go to state 18
+    conditional    go to state 19
+    special_token  go to state 20
+    add_anon_vars  go to state 21
 
 
-state 84
+state 79
 
-   25 conditional: tok_if condition tok_loop_start program tok_else tok_loop_start . program tok_if_end
+   32 conditional: tok_if tok_multiply tok_greater_than tok_multiply tok_loop_start . program tok_if_end
 
-    tok_plus_print  shift, and go to state 1
-    tok_multiply    shift, and go to state 2
-    tok_var         shift, and go to state 3
-    tok_for_start   shift, and go to state 4
-    tok_if          shift, and go to state 5
-    tok_if_end      shift, and go to state 6
-    tok_identifier  shift, and go to state 7
+    error              shift, and go to state 1
+    tok_plus_print     shift, and go to state 2
+    tok_multiply       shift, and go to state 3
+    tok_var            shift, and go to state 4
+    tok_for_start      shift, and go to state 5
+    tok_if             shift, and go to state 6
+    tok_else           shift, and go to state 7
+    tok_if_end         shift, and go to state 8
+    tok_print_anon     shift, and go to state 9
+    tok_add_anon_vars  shift, and go to state 10
+    tok_identifier     shift, and go to state 11
 
     tok_if_end  [reduce using rule 1 (program)]
 
     program        go to state 87
-    statement      go to state 9
-    declaration    go to state 10
-    assignment     go to state 11
-    output         go to state 12
-    loop           go to state 13
-    conditional    go to state 14
-    special_token  go to state 15
+    statement      go to state 13
+    string_print   go to state 14
+    declaration    go to state 15
+    assignment     go to state 16
+    output         go to state 17
+    loop           go to state 18
+    conditional    go to state 19
+    special_token  go to state 20
+    add_anon_vars  go to state 21
 
 
-state 85
+state 80
 
-   23 loop: tok_for_start tok_in tok_range tok_int_literal tok_loop_start program tok_loop_end .
+   30 conditional: tok_if condition tok_loop_start program tok_loop_start . program tok_if_end
 
-    $default  reduce using rule 23 (loop)
+    error              shift, and go to state 1
+    tok_plus_print     shift, and go to state 2
+    tok_multiply       shift, and go to state 3
+    tok_var            shift, and go to state 4
+    tok_for_start      shift, and go to state 5
+    tok_if             shift, and go to state 6
+    tok_else           shift, and go to state 7
+    tok_if_end         shift, and go to state 8
+    tok_print_anon     shift, and go to state 9
+    tok_add_anon_vars  shift, and go to state 10
+    tok_identifier     shift, and go to state 11
+
+    tok_if_end  [reduce using rule 1 (program)]
+
+    program        go to state 88
+    statement      go to state 13
+    string_print   go to state 14
+    declaration    go to state 15
+    assignment     go to state 16
+    output         go to state 17
+    loop           go to state 18
+    conditional    go to state 19
+    special_token  go to state 20
+    add_anon_vars  go to state 21
 
 
-state 86
+state 81
 
-   28 conditional: tok_if compare_anon_const tok_loop_start program tok_else tok_loop_start program . tok_if_end
+   29 conditional: tok_if condition tok_loop_start program tok_else . program tok_if_end
 
-    tok_if_end  shift, and go to state 88
+    error              shift, and go to state 1
+    tok_plus_print     shift, and go to state 2
+    tok_multiply       shift, and go to state 3
+    tok_var            shift, and go to state 4
+    tok_for_start      shift, and go to state 5
+    tok_if             shift, and go to state 6
+    tok_else           shift, and go to state 7
+    tok_if_end         shift, and go to state 8
+    tok_print_anon     shift, and go to state 9
+    tok_add_anon_vars  shift, and go to state 10
+    tok_identifier     shift, and go to state 11
+
+    tok_if_end  [reduce using rule 1 (program)]
+
+    program        go to state 89
+    statement      go to state 13
+    string_print   go to state 14
+    declaration    go to state 15
+    assignment     go to state 16
+    output         go to state 17
+    loop           go to state 18
+    conditional    go to state 19
+    special_token  go to state 20
+    add_anon_vars  go to state 21
 
 
-state 87
+state 82
 
-   25 conditional: tok_if condition tok_loop_start program tok_else tok_loop_start program . tok_if_end
-
-    tok_if_end  shift, and go to state 89
-
-
-state 88
-
-   28 conditional: tok_if compare_anon_const tok_loop_start program tok_else tok_loop_start program tok_if_end .
+   28 conditional: tok_if condition tok_loop_start program tok_if_end .
 
     $default  reduce using rule 28 (conditional)
 
 
+state 83
+
+   24 assignment: tok_identifier tok_multiply tok_identifier tok_plus_print expression .
+   42 expression: expression . tok_plus_print expression
+   43           | expression . tok_minus expression
+   44           | expression . tok_multiply expression
+   45           | expression . tok_divide expression
+
+    tok_minus     shift, and go to state 51
+    tok_multiply  shift, and go to state 52
+    tok_divide    shift, and go to state 53
+
+    $default  reduce using rule 24 (assignment)
+
+
+state 84
+
+   49 add_anon_vars: tok_var tok_integer tok_multiply tok_plus_print tok_multiply tok_multiply .
+
+    $default  reduce using rule 49 (add_anon_vars)
+
+
+state 85
+
+   27 loop: tok_for_start tok_in tok_range tok_int_literal tok_loop_start program . tok_loop_end
+
+    tok_loop_end  shift, and go to state 90
+
+
+state 86
+
+   31 conditional: tok_if tok_multiply tok_equal tok_int_literal tok_loop_start program . tok_if_end tok_else tok_loop_start program tok_if_end
+   33            | tok_if tok_multiply tok_equal tok_int_literal tok_loop_start program . tok_if_end
+
+    tok_if_end  shift, and go to state 91
+
+
+state 87
+
+   32 conditional: tok_if tok_multiply tok_greater_than tok_multiply tok_loop_start program . tok_if_end
+
+    tok_if_end  shift, and go to state 92
+
+
+state 88
+
+   30 conditional: tok_if condition tok_loop_start program tok_loop_start program . tok_if_end
+
+    tok_if_end  shift, and go to state 93
+
+
 state 89
 
-   25 conditional: tok_if condition tok_loop_start program tok_else tok_loop_start program tok_if_end .
+   29 conditional: tok_if condition tok_loop_start program tok_else program . tok_if_end
 
-    $default  reduce using rule 25 (conditional)
+    tok_if_end  shift, and go to state 94
+
+
+state 90
+
+   27 loop: tok_for_start tok_in tok_range tok_int_literal tok_loop_start program tok_loop_end .
+
+    $default  reduce using rule 27 (loop)
+
+
+state 91
+
+   31 conditional: tok_if tok_multiply tok_equal tok_int_literal tok_loop_start program tok_if_end . tok_else tok_loop_start program tok_if_end
+   33            | tok_if tok_multiply tok_equal tok_int_literal tok_loop_start program tok_if_end .
+
+    tok_else  shift, and go to state 95
+
+    tok_else  [reduce using rule 33 (conditional)]
+    $default  reduce using rule 33 (conditional)
+
+
+state 92
+
+   32 conditional: tok_if tok_multiply tok_greater_than tok_multiply tok_loop_start program tok_if_end .
+
+    $default  reduce using rule 32 (conditional)
+
+
+state 93
+
+   30 conditional: tok_if condition tok_loop_start program tok_loop_start program tok_if_end .
+
+    $default  reduce using rule 30 (conditional)
+
+
+state 94
+
+   29 conditional: tok_if condition tok_loop_start program tok_else program tok_if_end .
+
+    $default  reduce using rule 29 (conditional)
+
+
+state 95
+
+   31 conditional: tok_if tok_multiply tok_equal tok_int_literal tok_loop_start program tok_if_end tok_else . tok_loop_start program tok_if_end
+
+    tok_loop_start  shift, and go to state 96
+
+
+state 96
+
+   31 conditional: tok_if tok_multiply tok_equal tok_int_literal tok_loop_start program tok_if_end tok_else tok_loop_start . program tok_if_end
+
+    error              shift, and go to state 1
+    tok_plus_print     shift, and go to state 2
+    tok_multiply       shift, and go to state 3
+    tok_var            shift, and go to state 4
+    tok_for_start      shift, and go to state 5
+    tok_if             shift, and go to state 6
+    tok_else           shift, and go to state 7
+    tok_if_end         shift, and go to state 8
+    tok_print_anon     shift, and go to state 9
+    tok_add_anon_vars  shift, and go to state 10
+    tok_identifier     shift, and go to state 11
+
+    tok_if_end  [reduce using rule 1 (program)]
+
+    program        go to state 97
+    statement      go to state 13
+    string_print   go to state 14
+    declaration    go to state 15
+    assignment     go to state 16
+    output         go to state 17
+    loop           go to state 18
+    conditional    go to state 19
+    special_token  go to state 20
+    add_anon_vars  go to state 21
+
+
+state 97
+
+   31 conditional: tok_if tok_multiply tok_equal tok_int_literal tok_loop_start program tok_if_end tok_else tok_loop_start program . tok_if_end
+
+    tok_if_end  shift, and go to state 98
+
+
+state 98
+
+   31 conditional: tok_if tok_multiply tok_equal tok_int_literal tok_loop_start program tok_if_end tok_else tok_loop_start program tok_if_end .
+
+    $default  reduce using rule 31 (conditional)

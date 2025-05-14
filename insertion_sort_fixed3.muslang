@@ -1,0 +1,144 @@
+# MusLang Implementation of Insertion Sort (Correctly Fixed Version)
+# This program creates an array and then sorts it using insertion sort
+
+# Initialize array elements (stored as individual variables)
+a0 C♯ 5   # First element is 5
+a1 C♯ 2   # Second element is 2
+a2 C♯ 4   # Third element is 4
+a3 C♯ 1   # Fourth element is 1
+a4 C♯ 3   # Fifth element is 3
+
+# Print original array
+E "Original array:"
+E a0
+E a1
+E a2
+E a3
+E a4
+
+# First make a copy of original values to work with
+v0 C♯ a0  # v0 = 5
+v1 C♯ a1  # v1 = 2
+v2 C♯ a2  # v2 = 4
+v3 C♯ a3  # v3 = 1
+v4 C♯ a4  # v4 = 3
+
+# Temporary variable for swapping
+temp C♯ 0
+
+E "Starting insertion sort..."
+
+# --------------------------------------------------------
+# Step 1: Sort elements at indices 0 and 1
+# --------------------------------------------------------
+E "Step 1: Sort elements at indices 0 and 1"
+
+# If v0 > v1, swap them
+# This is the base case - we'll build a sorted subarray starting with [v0]
+G G G          # if 
+v0 F♯ F♯ v1    # if v0 > v1 (5 > 2)
+C C C          # begin then block
+    temp C♯ v0  # temp = v0 (temp = 5)
+    v0 C♯ v1    # v0 = v1 (v0 = 2)
+    v1 C♯ temp  # v1 = temp (v1 = 5)
+E E E          # end if
+
+# Print array after step 1
+E "After step 1:"
+E v0  # Should be 2
+E v1  # Should be 5
+E v2  # Should be 4
+E v3  # Should be 1
+E v4  # Should be 3
+
+# --------------------------------------------------------
+# Step 2: Insert element at index 2 into sorted subarray [0,1]
+# --------------------------------------------------------
+E "Step 2: Insert element at index 2"
+
+# Save the value to insert
+key C♯ v2  # key = 4
+
+# If the key belongs before the last element of sorted portion
+G G G          # if
+key F♯ F♯ v1   # if key < v1 (4 < 5)
+C C C          # begin then block
+    # Shift v1 to the right (to position 2)
+    v2 C♯ v1    # v2 = v1 (v2 = 5)
+    
+    # The key is 4 and v0 is 2
+    # Since 4 > 2, key should be placed at position 1 (between v0 and v2)
+    v1 C♯ key   # v1 = key (v1 = 4)
+E E E          # end if
+
+# Print array after step 2
+E "After step 2:"
+E v0  # Should be 2
+E v1  # Should be 4
+E v2  # Should be 5
+E v3  # Should be 1
+E v4  # Should be 3
+
+# --------------------------------------------------------
+# Step 3: Insert element at index 3 into sorted subarray [0,1,2]
+# --------------------------------------------------------
+E "Step 3: Insert element at index 3"
+
+# Save the value to insert
+key C♯ v3  # key = 1
+
+# First shift all elements that are greater than the key
+v3 C♯ v2    # temp storage of the shifted element
+v2 C♯ v1    # Shift v1 to v2
+v1 C♯ v0    # Shift v0 to v1
+v0 C♯ key   # Place the key at the beginning (since 1 is smallest)
+
+# Print array after step 3
+E "After step 3:"
+E v0  # Should be 1
+E v1  # Should be 2
+E v2  # Should be 4
+E v3  # Should be 5
+E v4  # Should be 3
+
+# --------------------------------------------------------
+# Step 4: Insert element at index 4 into sorted subarray [0,1,2,3]
+# --------------------------------------------------------
+E "Step 4: Insert element at index 4"
+
+# Save the value to insert
+key C♯ v4  # key = 3
+
+# Since key (3) is less than v3 (5), shift v3 right
+v4 C♯ v3   # v4 = 5
+
+# Since key (3) is less than v2 (4), shift v2 right  
+v3 C♯ v2   # v3 = 4
+
+# Since key (3) is greater than v1 (2), key goes at position 2
+v2 C♯ key  # v2 = 3
+
+# Array is now [1, 2, 3, 4, 5]
+
+# Print the final sorted array (internal):
+E "Final sorted array (internal):"
+E v0
+E v1
+E v2
+E v3
+E v4
+
+# Copy the sorted result back to the original array
+a0 C♯ v0
+a1 C♯ v1
+a2 C♯ v2
+a3 C♯ v3
+a4 C♯ v4  # This line was missing in the original program
+
+# Print the sorted array (result)
+E "Sorted array (result):"
+E a0
+E a1
+E a2
+E a3
+E a4

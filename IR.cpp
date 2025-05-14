@@ -229,12 +229,15 @@ void createLoopStart(int iterations) {
     // Conditional branch based on the condition
     builder.CreateCondBr(conditionVal, bodyBlock, exitBlock);
 
-    // Set insert point to the loop body
+    // Set insert point to the loop body - this is where the MusLang code for the loop body will be placed
     builder.SetInsertPoint(bodyBlock);
 
     // Save loop information for later use
     LoopInfo loopInfo = {headerBlock, bodyBlock, exitBlock, counterVar, iterationCount};
     loopStack.push(loopInfo);
+
+    // Note: The loop body code will be inserted here by the parser
+    // We don't move the insert point after this function returns
 }
 
 // Handles the end of a for loop
@@ -247,6 +250,9 @@ void createLoopEnd() {
     // Get loop information
     LoopInfo loopInfo = loopStack.top();
     loopStack.pop();
+
+    // We should still be in the body block at this point since the parser has just finished
+    // processing the loop body and called this function
 
     // Increment loop counter
     Value *currentCount = builder.CreateLoad(builder.getInt32Ty(), loopInfo.counterVar, "current_count");

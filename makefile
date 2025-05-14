@@ -20,6 +20,8 @@ LIBS := $(shell $(LLVM_CONFIG) --libs core)
 TARGET := muslangc
 SAMPLE := sample.muslang
 INSERTION_SORT := insertion_sort.muslang
+INSERTION_SORT_CORRECT := insertion_sort_correct.muslang
+INSERTION_SORT_FIXED2 := insertion_sort_fixed2.muslang
 LOOP_DEBUG := loop_debug.muslang
 
 all: $(TARGET)
@@ -61,6 +63,18 @@ run_insertion_sort: all
 	$(LLC) -filetype=obj insertion_sort.ll -o insertion_sort.o
 	$(CC) insertion_sort.o -o insertion_sort
 	./insertion_sort
+
+run_insertion_sort_correct: all
+	./$(TARGET) $(INSERTION_SORT_CORRECT) > insertion_sort_correct.ll
+	$(LLC) -filetype=obj insertion_sort_correct.ll -o insertion_sort_correct.o
+	$(CC) insertion_sort_correct.o -o insertion_sort_correct
+	./insertion_sort_correct
+	
+run_insertion_sort_fixed2: all
+	./$(TARGET) $(INSERTION_SORT_FIXED2) > insertion_sort_fixed2.ll
+	$(LLC) -filetype=obj insertion_sort_fixed2.ll -o insertion_sort_fixed2.o
+	$(CC) insertion_sort_fixed2.o -o insertion_sort_fixed2
+	./insertion_sort_fixed2
 
 run_generated_insertion_sort: all
 	$(LLC) -filetype=obj insertion_sort.ll -o insertion_sort.o

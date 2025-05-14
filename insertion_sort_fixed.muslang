@@ -1,0 +1,204 @@
+# MusLang Implementation of Insertion Sort (Fixed Version)
+# This program creates an array and then sorts it using insertion sort
+
+# Initialize array elements (stored as individual variables)
+a0 C♯ 5   # First element is 5
+a1 C♯ 2   # Second element is 2
+a2 C♯ 4   # Third element is 4
+a3 C♯ 1   # Fourth element is 1
+a4 C♯ 3   # Fifth element is 3
+
+# Print original array
+E "Original array:"
+E a0
+E a1
+E a2
+E a3
+E a4
+
+# First make a copy of original values to work with
+v0 C♯ a0  # v0 = 5
+v1 C♯ a1  # v1 = 2
+v2 C♯ a2  # v2 = 4
+v3 C♯ a3  # v3 = 1
+v4 C♯ a4  # v4 = 3
+
+# Temporary variable for swapping
+temp C♯ 0
+
+E "Starting insertion sort (step by step)..."
+
+# Step 1: Insert v1 into sorted portion (just v0)
+E "Step 1: Inserting element at index 1"
+key C♯ v1  # key = 2
+
+# If v0 > key, move v0 to v1's position
+G G G            # if
+v0 F♯ F♯ key     # if v0 > key (5 > 2)
+C C C            # begin then block
+    v1 C♯ v0     # v1 = v0 (move 5 to position 1)
+    v0 C♯ key    # v0 = key (put 2 at position 0)
+E E E            # end if
+
+E "After Step 1:"
+E v0
+E v1
+E v2
+E v3
+E v4
+
+# Step 2: Insert v2 into sorted portion [v0,v1]
+E "Step 2: Inserting element at index 2"
+key C♯ v2  # key = 4
+
+# Check if key < v1, if so shift v1 right
+G G G            # if
+v1 F♯ F♯ key     # if v1 > key (5 > 4)
+C C C            # begin then block
+    v2 C♯ v1     # v2 = v1 (move 5 to position 2)
+    
+    # Check if key < v0, if so shift v0 right
+    G G G            # if
+    v0 F♯ F♯ key     # if v0 > key (2 > 4)
+    C C C            # begin then block
+        v1 C♯ v0     # v1 = v0 (move 2 to position 1)
+        v0 C♯ key    # v0 = key (put 4 at position 0)
+    E E E            # end if
+    
+    # If not v0 > key, put key at position 1
+    G G G            # if
+    v0 F♯ F♯ key     # if not (v0 > key)
+    C C C            # begin then block
+        v1 C♯ key    # v1 = key (put 4 at position 1)
+    E E E            # end if
+E E E            # end if
+
+E "After Step 2:"
+E v0
+E v1
+E v2
+E v3
+E v4
+
+# Step 3: Insert v3 into sorted portion [v0,v1,v2]
+E "Step 3: Inserting element at index 3"
+key C♯ v3  # key = 1
+
+# If v2 > key, shift v2 right
+G G G            # if
+v2 F♯ F♯ key     # if v2 > key (? > 1)
+C C C            # begin then block
+    v3 C♯ v2     # v3 = v2
+    
+    # If v1 > key, shift v1 right
+    G G G            # if
+    v1 F♯ F♯ key     # if v1 > key (? > 1)
+    C C C            # begin then block
+        v2 C♯ v1     # v2 = v1
+        
+        # If v0 > key, shift v0 right
+        G G G            # if
+        v0 F♯ F♯ key     # if v0 > key (? > 1)
+        C C C            # begin then block
+            v1 C♯ v0     # v1 = v0
+            v0 C♯ key    # v0 = key (put 1 at position 0)
+        E E E            # end if
+        
+        # If not v0 > key, put key at position 1
+        G G G            # if
+        v0 F♯ F♯ key     # if not (v0 > key)
+        C C C            # begin then block
+            v1 C♯ key    # v1 = key
+        E E E            # end if
+    E E E            # end if
+    
+    # If not v1 > key, put key at position 2
+    G G G            # if
+    v1 F♯ F♯ key     # if not (v1 > key)
+    C C C            # begin then block
+        v2 C♯ key    # v2 = key
+    E E E            # end if
+E E E            # end if
+
+E "After Step 3:"
+E v0
+E v1
+E v2
+E v3
+E v4
+
+# Step 4: Insert v4 into sorted portion [v0,v1,v2,v3]
+E "Step 4: Inserting element at index 4"
+key C♯ v4  # key = 3
+
+# If v3 > key, shift v3 right
+G G G            # if
+v3 F♯ F♯ key     # if v3 > key (? > 3)
+C C C            # begin then block
+    v4 C♯ v3     # v4 = v3
+    
+    # If v2 > key, shift v2 right
+    G G G            # if
+    v2 F♯ F♯ key     # if v2 > key (? > 3)
+    C C C            # begin then block
+        v3 C♯ v2     # v3 = v2
+        
+        # If v1 > key, shift v1 right
+        G G G            # if
+        v1 F♯ F♯ key     # if v1 > key (? > 3)
+        C C C            # begin then block
+            v2 C♯ v1     # v2 = v1
+            
+            # If v0 > key, shift v0 right
+            G G G            # if
+            v0 F♯ F♯ key     # if v0 > key (? > 3)
+            C C C            # begin then block
+                v1 C♯ v0     # v1 = v0
+                v0 C♯ key    # v0 = key
+            E E E            # end if
+            
+            # If not v0 > key, put key at position 1
+            G G G            # if
+            v0 F♯ F♯ key     # if not (v0 > key)
+            C C C            # begin then block
+                v1 C♯ key    # v1 = key
+            E E E            # end if
+        E E E            # end if
+        
+        # If not v1 > key, put key at position 2
+        G G G            # if
+        v1 F♯ F♯ key     # if not (v1 > key)
+        C C C            # begin then block
+            v2 C♯ key    # v2 = key
+        E E E            # end if
+    E E E            # end if
+    
+    # If not v2 > key, put key at position 3
+    G G G            # if
+    v2 F♯ F♯ key     # if not (v2 > key)
+    C C C            # begin then block
+        v3 C♯ key    # v3 = key
+    E E E            # end if
+E E E            # end if
+
+E "Final sorted array (internal):"
+E v0
+E v1
+E v2
+E v3
+E v4
+
+# Copy the sorted result back to original array
+a0 C♯ v0
+a1 C♯ v1
+a2 C♯ v2
+a3 C♯ v3
+a4 C♯ v4
+
+# Print the sorted array
+E "Sorted array (result):"
+E a0
+E a1
+E a2
+E a3
+E a4

@@ -74,12 +74,14 @@
 %type <value> term expression condition
 %token tok_end
 
-// Higher precedence tokens help resolve shift/reduce conflicts
+// Define token precedence and associativity to resolve conflicts
 %right tok_increment
 %left tok_plus_print tok_minus
 %left tok_multiply tok_divide
 %left tok_and tok_or
 %nonassoc tok_equal tok_less_than tok_greater_than
+%nonassoc LOWER_THAN_ELSE
+%nonassoc tok_else
 
 %start program
 
@@ -90,12 +92,6 @@
 program: 
 	/* empty */				{debugBison(1);}
 	| statement program		{debugBison(2);}
-	| statement             {debugBison(2);} /* Allow the last statement without requiring another statement after it */
-	| error {
-		debugBison(997);
-		yyerrok; /* Try to recover from errors wherever they occur */
-		yyclearin; /* Clear the lookahead token */
-	} program /* Continue parsing after error */
 	| error END {
 		debugBison(998); 
 		yyerrok; /* Handle errors that extend to EOF */
@@ -142,25 +138,18 @@ statement:
 		}
 	}
 	| add_anon_vars       {debugBison(100);}  /* Special add statement - fallback */
-	| print_anon_var      {debugBison(201);}  /* Special print statement - fallback */
 	| declaration		  {debugBison(3);}
 	| output			  {debugBison(4);}
 	| loop				  {debugBison(5);}
 	| conditional		  {debugBison(6);}
 	| special_token		  {debugBison(7);}
-	| tok_plus_print tok_string_literal {  /* Add this rule to handle the final string prints */
-		debugBison(30);
+	| string_print        {debugBison(30);} /* Moved to separate rule to avoid conflicts */
+	;
+
+string_print:
+	tok_plus_print tok_string_literal {
 		printString($2);
 		free($2);
-	}
-	| error  { 
-		debugBison(999); 
-		yyerrok; /* Error recovery - consume the token and continue */
-		YYABORT; /* Stop parsing to prevent infinite loops */
-	}
-	| error {
-		debugBison(996);
-		yyerrok; /* Recover from errors in statements too */
 	}
 	;
 
@@ -241,15 +230,18 @@ assignment:
 
 output:
 	tok_plus_print term			{debugBison(13); printDouble($2);}
-	| tok_plus_print tok_string_literal	{debugBison(14); printString($2); free($2);}
+	/* Removed duplicate string printing rule that was causing conflicts */
 	;
 
 loop:
-	tok_for_start tok_in tok_range tok_int_literal tok_loop_start program tok_loop_end
+	tok_for_start tok_in tok_range tok_int_literal
 	{
 		debugBison(15);
 		createLoopStart($4);
-		/* Loop body code is automatically inserted by the parser */
+	}
+	tok_loop_start program tok_loop_end
+	{
+		/* Loop body code has been inserted by the parser */
 		createLoopEnd();
 	}
 	;
@@ -333,23 +325,11 @@ condition:
 	expression tok_equal expression		{debugBison(18); $$ = createComparison($1, $3, llvm::CmpInst::FCMP_OEQ);}
 	| expression tok_less_than expression	{debugBison(19); $$ = createComparison($1, $3, llvm::CmpInst::FCMP_OLT);}
 	| expression tok_greater_than expression	{debugBison(20); $$ = createComparison($1, $3, llvm::FCmpInst::FCMP_OGT);}
-	| tok_multiply tok_greater_than tok_multiply	{debugBison(31); 
-		/* Special case for C♯ F♯ F♯ C♯ (compare the two most recent anonymous variables) */
-		if (anonVarCounter < 2) {
-			yyerror("Not enough anonymous variables for comparison");
-			exit(EXIT_FAILURE);
-		}
-		Value *val1 = getAnonVar(anonVarCounter-2); // Second last anonymous variable (x)
-		Value *val2 = getAnonVar(anonVarCounter-1); // Last anonymous variable (y)
-		$$ = createComparison(val1, val2, llvm::CmpInst::FCMP_OGT);
-	}
-	| tok_multiply tok_equal tok_int_literal	{debugBison(32);
-		/* Special case for C♯ G♯ G♯ 20 (compare last anonymous variable with a constant) */
-		Value *val = getLatestAnon();
-		Value *constant = createDoubleConstant((double)$3);
-		$$ = createComparison(val, constant, llvm::CmpInst::FCMP_OEQ);
-	}
 	;
+
+/* Removing these separate rules that cause conflicts
+compare_anon_vars and compare_anon_with_const
+and handling them directly in the conditional rule instead */
 
 term:
 	tok_identifier			{debugBison(21); Value* ptr = getFromSymbolTable($1); $$ = builder.CreateLoad(builder.getDoubleTy(), ptr, "load_identifier"); free($1);}
@@ -425,7 +405,7 @@ special_token:
 	| tok_if { debugBison(42); /* Handle if statement beginning */ }
 	;
 
-/* Create an explicit rule for the addition pattern C F♯ C♯ E C♯ C♯ */
+/* Special tokens for variable operations */
 add_anon_vars:
 	tok_var tok_integer tok_multiply tok_plus_print tok_multiply tok_multiply
 	{
@@ -455,21 +435,6 @@ add_anon_vars:
 	}
 	;
 
-/* Add a dedicated rule for the print pattern E C♯ */
-print_anon_var:
-    tok_plus_print tok_multiply
-    {
-        debugBison(200);
-        /* Special case for E C♯ (print the latest anonymous variable) */
-        if (latestAnon >= 0) {
-            fprintf(stderr, "Print rule: Printing anon var %d\n", latestAnon);
-            Value* val = getLatestAnon();
-            printDouble(val);
-        } else {
-            yyerror("No anonymous variable available to print");
-        }
-    }
-    ;
 %%
 int main(int argc, char** argv) {
 	// Process command line arguments

@@ -1,0 +1,263 @@
+# MusLang Implementation of Insertion Sort (Using Loops)
+# This program creates an array and then sorts it using insertion sort algorithm with loops
+
+# Initialize array elements (stored as individual variables)
+a0 C♯ 5   # First element is 5
+a1 C♯ 2   # Second element is 2
+a2 C♯ 4   # Third element is 4
+a3 C♯ 1   # Fourth element is 1
+a4 C♯ 3   # Fifth element is 3
+
+# Print original array
+E "Original array:"
+E a0
+E a1
+E a2
+E a3
+E a4
+
+# Create a copy of the array to work with
+v0 C♯ a0
+v1 C♯ a1
+v2 C♯ a2
+v3 C♯ a3
+v4 C♯ a4
+
+E "Performing insertion sort..."
+
+    # Compute the actual index (i+1) since our loop starts at 0
+    current_idx C♯ i E 1
+    
+    # Get key (current element to be placed in correct position)
+    # We'll access v1, v2, v3, or v4 based on current_idx
+    # First, we need to store the key in a temporary variable
+    
+    # Debug current index being processed
+    E "Processing element at index:"
+    E current_idx
+    
+    # Use conditional logic to get the right value based on current_idx
+    # Here we need to manually handle array access since we don't have array indexing
+    
+    # If current_idx is 1, use v1
+    G G G            # if
+    current_idx G♯ G♯ 1  # current_idx == 1
+    C C C            # begin then block
+    key C♯ v1
+    E E E            # end if
+    
+    # If current_idx is 2, use v2
+    G G G            # if
+    current_idx G♯ G♯ 2  # current_idx == 2
+    C C C            # begin then block
+    key C♯ v2
+    E E E            # end if
+    
+    # If current_idx is 3, use v3
+    G G G            # if
+    current_idx G♯ G♯ 3  # current_idx == 3
+    C C C            # begin then block
+    key C♯ v3
+    E E E            # end if
+    
+    # If current_idx is 4, use v4
+    G G G            # if
+    current_idx G♯ G♯ 4  # current_idx == 4
+    C C C            # begin then block
+    key C♯ v4
+    E E E            # end if
+    
+    # Now we have the key, print it for debugging
+    E "Current key value:"
+    E key
+    
+    # j is the position to the left of current_idx (current_idx - 1)
+    j C♯ current_idx D♯ 1
+    
+    # Debug j
+    E "Starting j value:"
+    E j
+    
+    # Inner loop to shift elements
+    # While j >= 0 and v[j] > key, we shift elements right
+    # Since we don't have while loops, we'll simulate it with a for loop and break conditions
+    
+    # Initialize a loop control flag
+    continue_shifting C♯ 1 # 1 = true, 0 = false
+    
+    # Use a for loop with a large enough range and break when needed
+    A♯ A♯ A♯       # Inner for loop (j shifting)
+    A♯ B           # in
+    C♯ D♯ 5        # range 5 (more than enough iterations)
+    C C C          # begin inner loop body
+    
+        # Break if continue_shifting is false or j < 0
+        G G G            # if
+        j G G 0          # j < 0 
+        C C C            # begin then block
+        continue_shifting C♯ 0  # Set flag to false
+        E E E            # end if
+        
+        # If we should stop, skip the rest of this iteration
+        G G G            # if
+        continue_shifting G♯ G♯ 0  # continue_shifting == 0
+        C C C            # begin then block
+        # Break - we'll add code after the loop to check this flag
+        E "Breaking inner loop"
+        B B B          # end loop body - this won't actually break, but we'll check flag after loop
+        E E E            # end if
+        
+        # At this point j >= 0, now we need to compare v[j] with key
+        # We'll need conditionals to check which v[j] to use
+        
+        # If j is 0, use v0
+        G G G            # if
+        j G♯ G♯ 0        # j == 0
+        C C C            # begin then block
+        current C♯ v0    # current = v[j]
+        E E E            # end if
+        
+        # If j is 1, use v1
+        G G G            # if
+        j G♯ G♯ 1        # j == 1
+        C C C            # begin then block
+        current C♯ v1    # current = v[j]
+        E E E            # end if
+        
+        # If j is 2, use v2
+        G G G            # if
+        j G♯ G♯ 2        # j == 2
+        C C C            # begin then block
+        current C♯ v2    # current = v[j]
+        E E E            # end if
+        
+        # If j is 3, use v3
+        G G G            # if
+        j G♯ G♯ 3        # j == 3
+        C C C            # begin then block
+        current C♯ v3    # current = v[j]
+        E E E            # end if
+        
+        # Print current value being compared
+        E "Comparing with value at j:"
+        E current
+        
+        # If current <= key, we stop shifting
+        G G G            # if
+        current F♯ F♯ key # current > key (we need to shift)
+        C C C            # begin then block
+        
+            # We need to move v[j] to v[j+1]
+            # j+1 position
+            j_plus_1 C♯ j E 1
+            
+            # Perform the shift based on j and j+1 values
+            # If j is 0, shift v0 to v1
+            G G G            # if
+            j G♯ G♯ 0        # j == 0
+            C C C            # begin then block
+            v1 C♯ v0
+            E E E            # end if
+            
+            # If j is 1, shift v1 to v2
+            G G G            # if
+            j G♯ G♯ 1        # j == 1
+            C C C            # begin then block
+            v2 C♯ v1
+            E E E            # end if
+            
+            # If j is 2, shift v2 to v3
+            G G G            # if
+            j G♯ G♯ 2        # j == 2
+            C C C            # begin then block
+            v3 C♯ v2
+            E E E            # end if
+            
+            # If j is 3, shift v3 to v4
+            G G G            # if
+            j G♯ G♯ 3        # j == 3
+            C C C            # begin then block
+            v4 C♯ v3
+            E E E            # end if
+            
+            # Decrement j
+            j C♯ j D♯ 1
+            
+            # Debug j after decrement
+            E "New j value after shift:"
+            E j
+        
+        E E E            # end if - current > key
+        
+        # If current <= key, we stop shifting
+        G G G            # if
+        current F♯ F♯ key # if not (current > key)
+        C C C            # begin else block - awkward way to implement "else"
+            continue_shifting C♯ 0  # Stop shifting
+            E "Found correct position, stopping shifts"
+        E E E            # end if
+        
+    B B B          # end inner loop body
+    
+    # Now place the key at j+1 position
+    # j might be -1 if we need to place at the beginning
+    j_plus_1 C♯ j E 1
+    
+    E "Final position for key:"
+    E j_plus_1
+    
+    # Place key in the right position based on j+1
+    G G G            # if
+    j_plus_1 G♯ G♯ 0 # j+1 == 0
+    C C C            # begin then block
+    v0 C♯ key
+    E E E            # end if
+    
+    G G G            # if
+    j_plus_1 G♯ G♯ 1 # j+1 == 1
+    C C C            # begin then block
+    v1 C♯ key
+    E E E            # end if
+    
+    G G G            # if
+    j_plus_1 G♯ G♯ 2 # j+1 == 2
+    C C C            # begin then block
+    v2 C♯ key
+    E E E            # end if
+    
+    G G G            # if
+    j_plus_1 G♯ G♯ 3 # j+1 == 3
+    C C C            # begin then block
+    v3 C♯ key
+    E E E            # end if
+    
+    G G G            # if
+    j_plus_1 G♯ G♯ 4 # j+1 == 4
+    C C C            # begin then block
+    v4 C♯ key
+    E E E            # end if
+    
+    # Print array after this iteration for debugging
+    E "Array after placing key:"
+    E v0
+    E v1
+    E v2
+    E v3
+    E v4
+    
+B B B          # end outer loop body
+
+# Copy the sorted array back to a0-a4 for final output
+a0 C♯ v0
+a1 C♯ v1
+a2 C♯ v2
+a3 C♯ v3
+a4 C♯ v4
+
+# Print the sorted array
+E "Sorted array:"
+E a0
+E a1
+E a2
+E a3
+E a4
